@@ -1,92 +1,275 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import React, { useRef, useState } from 'react'
-import { TrophyTwoTone } from '@ant-design/icons'
-import { Layout, Menu, Breadcrumb, ConfigProvider } from 'antd'
-import zhCN from 'antd/lib/locale/zh_CN'
-const { Header, Content, Footer } = Layout
+import React, { useRef, useState, useEffect } from 'react'
+import { Table, Input, Button, Space, Modal, Form, DatePicker } from 'antd'
+import Highlighter from 'react-highlight-words'
+import ExportJsonExcel from 'js-export-excel'
+import { SearchOutlined } from '@ant-design/icons'
+import App from './component/Layout/index'
+import style from '../styles/Home.module.css'
+import TableFrom from './component/TableForm'
+import { fetchTable } from './api/hello'
 
-const App = (props = {}) => {
-  const { children } = props
-  return (
-    <ConfigProvider locale={zhCN}>
-      <Layout style={{ height: '100vh' }}>
-        <style jsx>{`
-          .site-layout-content {
-            min-height: 100%;
-            padding: 24px;
-            background: #fff;
+const Home = () => {
+  const [data, setData] = useState([])
+  const [searchText, setSearchText] = useState('')
+  const [searchedColumn, setSearchedColumn] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [itemData, setItemData] = useState({})
+  const [changeData, setChangeData] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const searchInput = useRef(null)
+  useEffect(() => {
+    setLoading(true)
+    fetchTable().then((res) => {
+      setData(res)
+      setLoading(false)
+    })
+  }, [isModalVisible])
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm()
+    setSearchText(selectedKeys[0])
+    setSearchedColumn(dataIndex)
+  }
+
+  const handleReset = (clearFilters) => {
+    clearFilters()
+    setSearchText('')
+  }
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
+      <div
+        style={{
+          padding: 8
+        }}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          .logo {
-            float: left;
-            width: 200px;
-            color: #fff;
-            font-size: 24px;
-            font-weight: STLiti;
-            font-weight: 800;
-            font-family: cursive;
-            margin-right: 15px;
-          }
-          .ant-row-rtl #components-layout-demo-top .logo {
-            float: right;
-            margin: 16px 0 16px 24px;
-          }
-        `}</style>
-        <Header
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
-            padding: '0 30px',
-            position: 'fixed',
-            width: '100%',
-            zIndex: '999'
+            marginBottom: 8,
+            display: 'block'
           }}
-        >
-          <div className="logo">
-            <TrophyTwoTone
-              style={{
-                padding: '5px 7px 0 0'
-              }}
-            />
-            杨一凡录入系统
-          </div>
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['1']}
-            items={new Array(1).fill(null).map((_, index) => {
-              const key = index + 1
-              return {
-                key,
-                label: '出货量'
-              }
-            })}
-          />
-        </Header>
-        <Content
-          style={{
-            padding: '0 30px',
-            marginTop: '60px'
-          }}
-        >
-          <Breadcrumb
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
             style={{
-              margin: '16px 0'
+              width: 90
             }}
           >
-            {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>出货量</Breadcrumb.Item> */}
-          </Breadcrumb>
-          <div className="site-layout-content">{children}</div>
-        </Content>
-        <Footer
-          style={{
-            textAlign: 'center'
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false
+              })
+              setSearchText(selectedKeys[0])
+              setSearchedColumn(dataIndex)
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100)
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: '#ffc069',
+            padding: 0
           }}
-        >
-          Table Export ©2022 Created by LIULIN
-        </Footer>
-      </Layout>
-    </ConfigProvider>
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      )
+  })
+
+  const columns = [
+    {
+      title: '送货日期',
+      dataIndex: 'date',
+      key: 'date',
+      width: '20%',
+      ...getColumnSearchProps('date')
+    },
+    {
+      title: '品名',
+      dataIndex: 'name',
+      key: 'name',
+      ...getColumnSearchProps('name')
+    },
+    {
+      title: '数量',
+      dataIndex: 'num',
+      key: 'num',
+      sorter: {
+        compare: (a, b) => a.num - b.num
+        // multiple: 3
+      },
+      sortDirections: ['descend', 'ascend']
+    },
+    {
+      title: '单价',
+      dataIndex: 'unitPrice',
+      key: 'unitPrice'
+    },
+    {
+      title: '金额/元',
+      dataIndex: 'price',
+      sorter: {
+        compare: (a, b) => a.price - b.price
+        // multiple: 3
+      },
+      key: 'price'
+    },
+    {
+      title: '回款日期',
+      dataIndex: 'rePriceDate',
+      key: 'rePriceDate'
+    },
+    {
+      title: '回款金额',
+      dataIndex: 'rePrice',
+      key: 'rePrice'
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark'
+    },
+    {
+      title: '操作',
+      dataIndex: '',
+      key: 'x',
+      render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
+    }
+  ]
+
+  const showModal = (re) => {
+    setItemData(re)
+    setIsModalVisible(true)
+  }
+
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    setChangeData(extra.currentDataSource)
+  }
+
+  const exportTable = () => {
+    let sheetFilter = [
+      'date',
+      'name',
+      'num',
+      'unitPrice',
+      'price',
+      'rePriceDate',
+      'rePrice',
+      'remark'
+    ]
+    let option = {}
+    option.fileName = '出货单'
+    option.datas = [
+      {
+        sheetData: changeData,
+        sheetName: '出货单',
+        sheetFilter: sheetFilter,
+        sheetHeader: [
+          '送货日期',
+          '品名',
+          '数量',
+          '单价',
+          '金额/元',
+          '回款日期',
+          '回款金额',
+          '备注'
+        ],
+        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]
+      }
+    ]
+    const toExcel = new ExportJsonExcel(option) //new
+    toExcel.saveExcel() //保存
+  }
+
+  return (
+    <App>
+      <div>
+        <div className={style.top}>
+          <Button type="primary" onClick={() => showModal({})}>
+            新增
+          </Button>
+          <Button type="primary" onClick={exportTable} danger ghost>
+            导出
+          </Button>
+        </div>
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 15 }}
+          scroll={{ y: 400 }}
+          onChange={onChange}
+        />
+        <TableFrom
+          isModalVisible={isModalVisible}
+          data={itemData}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+        />
+      </div>
+    </App>
   )
 }
-export default App
+
+export default Home

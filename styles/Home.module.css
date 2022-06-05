@@ -107,6 +107,11 @@
   height: 1em;
   margin-left: 0.5rem;
 }
+.top{
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
 
 @media (max-width: 600px) {
   .grid {
