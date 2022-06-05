@@ -3,9 +3,9 @@ import { Table, Input, Button, Space, Modal, Form, DatePicker } from 'antd'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
-import App from './component/Layout/index'
+import App from './components/Layout/index'
 import style from '../styles/Home.module.css'
-import TableFrom from './component/TableForm'
+import TableFrom from './components/TableForm'
 import { fetchTable } from './api/hello'
 
 const Home = () => {
