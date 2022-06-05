@@ -22,6 +22,7 @@ const Home = () => {
     setLoading(true)
     fetchTable().then((res) => {
       setData(res)
+      setChangeData(res)
       setLoading(false)
     })
   }, [isModalVisible])
@@ -134,11 +135,20 @@ const Home = () => {
       title: '送货日期',
       dataIndex: 'date',
       key: 'date',
-      width: '20%',
       ...getColumnSearchProps('date')
     },
     {
-      title: '品名',
+      title: '类别',
+      dataIndex: 'type',
+      key: 'type'
+    },
+    {
+      title: '供应商名称',
+      dataIndex: 'supplierName',
+      key: 'supplierName'
+    },
+    {
+      title: '规格名称',
       dataIndex: 'name',
       key: 'name',
       ...getColumnSearchProps('name')
@@ -168,12 +178,12 @@ const Home = () => {
       key: 'price'
     },
     {
-      title: '回款日期',
+      title: '付款日期',
       dataIndex: 'rePriceDate',
       key: 'rePriceDate'
     },
     {
-      title: '回款金额',
+      title: '付款金额',
       dataIndex: 'rePrice',
       key: 'rePrice'
     },
@@ -210,6 +220,8 @@ const Home = () => {
   const exportTable = () => {
     let sheetFilter = [
       'date',
+      'type',
+      'supplierName',
       'name',
       'num',
       'unitPrice',
@@ -227,12 +239,14 @@ const Home = () => {
         sheetFilter: sheetFilter,
         sheetHeader: [
           '送货日期',
-          '品名',
+          '类别',
+          '供应商名称',
+          '规格名称',
           '数量',
           '单价',
           '金额/元',
-          '回款日期',
-          '回款金额',
+          '付款日期',
+          '付款金额',
           '备注'
         ],
         columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]

@@ -75,12 +75,38 @@ const TableForm = (props) => {
         </Form.Item>
         <Form.Item
           name="name"
-          label="品名"
+          label="规格名称"
           rules={[
             {
               type: 'string',
               required: true,
-              message: '请输入品名!'
+              message: '请输入规格名称!'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="type"
+          label="类别"
+          rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入类别!'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="supplierName"
+          label="供应商名称"
+          rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入供应商名称!'
             }
           ]}
         >
@@ -112,10 +138,10 @@ const TableForm = (props) => {
         >
           <InputNumber min={0} />
         </Form.Item>
-        <Form.Item name="rePriceDate" label="回款日期">
+        <Form.Item name="rePriceDate" label="付款日期">
           <DatePicker />
         </Form.Item>
-        <Form.Item name="rePrice" label="回款金额">
+        <Form.Item name="rePrice" label="付款金额">
           <InputNumber min={1} />
         </Form.Item>
         <Form.Item name="remark" label="备注">

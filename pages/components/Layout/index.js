@@ -1,8 +1,5 @@
-import Head from 'next/head'
-import Image from 'next/image'
-// import styles from '../../styles/Home.module.css'
 import React, { useRef, useState } from 'react'
-import { TrophyTwoTone } from '@ant-design/icons'
+import Images from 'next/image'
 import { Layout, Menu, Breadcrumb, ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 const { Header, Content, Footer } = Layout
@@ -20,7 +17,9 @@ const App = (props = {}) => {
           }
           .logo {
             float: left;
-            width: 200px;
+            width: 240px;
+            height: 64px;
+            display: flex;
             color: #fff;
             font-size: 24px;
             font-weight: STLiti;
@@ -42,12 +41,19 @@ const App = (props = {}) => {
           }}
         >
           <div className="logo">
-            <TrophyTwoTone
+            <span
               style={{
-                padding: '5px 7px 0 0'
+                marginTop: '8px'
               }}
-            />
-            杨一凡录入系统
+            >
+              <Images
+                alt="ll"
+                width={70}
+                height={50}
+                src={'/images/logo.png'}
+              />
+            </span>
+            金翁农业系统
           </div>
           <Menu
             theme="dark"
@@ -57,7 +63,7 @@ const App = (props = {}) => {
               const key = index + 1
               return {
                 key,
-                label: '出货量'
+                label: '出库详情'
               }
             })}
           />
@@ -74,7 +80,7 @@ const App = (props = {}) => {
             }}
           >
             {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>出货量</Breadcrumb.Item> */}
+            <Breadcrumb.Item>出库详情</Breadcrumb.Item> */}
           </Breadcrumb>
           <div className="site-layout-content">{children}</div>
         </Content>
