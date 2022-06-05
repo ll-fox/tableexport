@@ -117,6 +117,45 @@ const TableForm = (props) => {
           <Input />
         </Form.Item>
         <Form.Item
+          name="username"
+          label="收件人"
+          rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入收件人!'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          label="电话"
+          rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入收件人电话!'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="address"
+          label="地址"
+          rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入收件人地址!'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           name="reason"
           label="售后原因"
           rules={[

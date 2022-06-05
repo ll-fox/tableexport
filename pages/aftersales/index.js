@@ -154,6 +154,22 @@ const Home = () => {
       ...getColumnSearchProps('odd')
     },
     {
+      title: '收件人',
+      dataIndex: 'username',
+      key: 'username',
+      ...getColumnSearchProps('odd')
+    },
+    {
+      title: '电话',
+      dataIndex: 'phone',
+      key: 'phone'
+    },
+    {
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address'
+    },
+    {
       title: '售后原因',
       dataIndex: 'reason',
       key: 'reason'
@@ -204,6 +220,9 @@ const Home = () => {
       'platform',
       'expressage',
       'odd',
+      'username',
+      'phone',
+      'address',
       'reason',
       'dealwith',
       'result',
@@ -221,6 +240,9 @@ const Home = () => {
           '平台名称',
           '快递公司',
           '快递单号',
+          '收件人',
+          '电话',
+          '地址',
           '售后原因',
           '是否已处理',
           '处理结果',
