@@ -1,11 +1,32 @@
 import React, { useRef, useState } from 'react'
+import { useRouter } from 'next/router'
 import Images from 'next/image'
+import Link from 'next/link'
 import { Layout, Menu, Breadcrumb, ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 const { Header, Content, Footer } = Layout
 
 const App = (props = {}) => {
   const { children } = props
+  const [num, setNum] = useState('1')
+  const router = useRouter()
+
+  const menu = [
+    {
+      label: (
+        <Link href="/">
+          <a>进库详情</a>
+        </Link>
+      )
+    },
+    {
+      label: (
+        <Link href="/aftersales">
+          <a>售后反馈</a>
+        </Link>
+      )
+    }
+  ]
   return (
     <ConfigProvider locale={zhCN}>
       <Layout style={{ height: '100vh' }}>
@@ -59,11 +80,16 @@ const App = (props = {}) => {
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['1']}
-            items={new Array(1).fill(null).map((_, index) => {
+            // selectedKeys={[num]}
+            // onClick={(item) => {
+            //   console.log(111, item)
+            //   // setNum(key)
+            // }}
+            items={menu.map((item, index) => {
               const key = index + 1
               return {
                 key,
-                label: '出库详情'
+                label: item.label
               }
             })}
           />
