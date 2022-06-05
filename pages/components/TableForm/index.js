@@ -3,6 +3,7 @@ import { Form, DatePicker, Input, Modal, InputNumber, message } from 'antd'
 import 'moment/locale/zh-cn'
 import { addItem, updateItem } from '../../api/hello'
 import moment from 'moment'
+import { cloneDeep, isEmpty } from 'lodash'
 const { TextArea } = Input
 const config = {
   rules: [
@@ -17,9 +18,11 @@ const config = {
 const TableForm = (props) => {
   const [form] = Form.useForm()
   const { handleCancel, handleOk, isModalVisible, data } = props
-  const newData = JSON.parse(JSON.stringify(data))
-  newData.date = moment(data.date)
-  newData.rePriceDate = data.rePriceDate ? moment(data.rePriceDate) : ''
+  const newData = cloneDeep(data)
+  if (!isEmpty(data)) {
+    newData.date = moment(data.date)
+    newData.rePriceDate = data.rePriceDate ? moment(data.rePriceDate) : ''
+  }
   const onFinish = () => {
     form.validateFields().then((values) => {
       ;(values.date = values.date.format('YYYY-MM-DD')),
@@ -27,7 +30,7 @@ const TableForm = (props) => {
           ? values.rePriceDate.format('YYYY-MM-DD')
           : '')
       values.price = values.num * values.unitPrice
-      if (JSON.stringify(data) == '{}') {
+      if (isEmpty(data)) {
         addItem(values).then((res) => {
           if (res) {
             message.success('保存成功！')
