@@ -270,7 +270,11 @@ const Home = () => {
           loading={loading}
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 15 }}
+          pagination={{
+            pageSize: 15,
+            total: data.length,
+            showTotal: (total) => `共 ${total} 条`
+          }}
           scroll={{ y: 400 }}
           onChange={onChange}
         />

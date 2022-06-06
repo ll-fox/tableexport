@@ -21,7 +21,7 @@ const addItem = async (val) => {
 const updateItem = async (val, id) => {
   const QA = AV.Object.createWithoutData('Aftersales', id)
   try {
-    QA.set('num', 10)
+    QA.set(val)
     const res = await QA.save()
     return res.toJSON()
   } catch (e) {
