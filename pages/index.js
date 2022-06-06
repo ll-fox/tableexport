@@ -280,7 +280,7 @@ const Home = () => {
             total: data.length,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 400 }}
+          scroll={{ y: 'calc(100vh - 400px)' }}
           onChange={onChange}
         />
         <TableFrom
