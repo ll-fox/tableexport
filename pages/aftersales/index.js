@@ -271,8 +271,9 @@ const Home = () => {
           columns={columns}
           dataSource={data}
           pagination={{
-            pageSize: 15,
             total: data.length,
+            showSizeChanger: true,
+            showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
           scroll={{ y: 'calc(100vh - 400px)' }}
