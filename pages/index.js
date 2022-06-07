@@ -6,7 +6,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import App from './components/Layout/index'
 import style from '../styles/Home.module.css'
 import TableFrom from './components/TableForm'
-import { fetchTable } from './api/hello'
+import { fetchTable } from './api/home'
 
 const Home = () => {
   const [data, setData] = useState([])

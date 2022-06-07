@@ -1,16 +1,34 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import Images from 'next/image'
 import Link from 'next/link'
-import { Layout, Menu, Breadcrumb, ConfigProvider } from 'antd'
+import { Layout, Menu, Breadcrumb, ConfigProvider, Dropdown, Space } from 'antd'
+import { DownOutlined, UserOutlined } from '@ant-design/icons'
+import MyContext from '../../lib/context'
 import zhCN from 'antd/lib/locale/zh_CN'
+import { logOut } from '../../api/user'
 const { Header, Content, Footer } = Layout
 
 const App = (props = {}) => {
   const { children } = props
+  const { user } = useContext(MyContext)
   const [num, setNum] = useState('1')
   const router = useRouter()
-
+  const menus = (
+    <Menu>
+      <Menu.Item
+        key={2}
+        danger={true}
+        onClick={() => {
+          logOut().then(() => {
+            router.push('/login')
+          })
+        }}
+      >
+        退出登陆
+      </Menu.Item>
+    </Menu>
+  )
   const menu = [
     {
       label: (
@@ -58,7 +76,8 @@ const App = (props = {}) => {
             padding: '0 30px',
             position: 'fixed',
             width: '100%',
-            zIndex: '999'
+            zIndex: '999',
+            display: 'flex'
           }}
         >
           <div className="logo">
@@ -93,6 +112,22 @@ const App = (props = {}) => {
               }
             })}
           />
+          <div
+            style={{
+              position: 'absolute',
+              right: '35px'
+            }}
+          >
+            <Dropdown placement="bottom" overlay={menus} arrow>
+              <a style={{ color: '#FFF' }} onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <UserOutlined style={{ fontSize: '20px' }} />
+                  {user?.username}
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          </div>
         </Header>
         <Content
           style={{
