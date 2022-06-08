@@ -4,7 +4,7 @@ import Images from 'next/image'
 import Link from 'next/link'
 import { Layout, Menu, Breadcrumb, ConfigProvider, Dropdown, Space } from 'antd'
 import { DownOutlined, UserOutlined } from '@ant-design/icons'
-import MyContext from '../../lib/context'
+import MyContext from '../../../lib/context'
 import zhCN from 'antd/lib/locale/zh_CN'
 import { logOut } from '../../api/user'
 const { Header, Content, Footer } = Layout

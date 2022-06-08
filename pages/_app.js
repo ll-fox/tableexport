@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import MyContext from './lib/context'
+import MyContext from '../lib/context'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { currentUser } from './api/user'
