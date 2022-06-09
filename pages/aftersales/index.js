@@ -256,7 +256,7 @@ const Home = () => {
   }
 
   return (
-    <App>
+    <App tab="2">
       <div>
         <div className={style.top}>
           <Button type="primary" onClick={() => showModal({})}>

@@ -10,9 +10,8 @@ import { logOut } from '../../api/user'
 const { Header, Content, Footer } = Layout
 
 const App = (props = {}) => {
-  const { children } = props
+  const { children, tab } = props
   const { user } = useContext(MyContext)
-  const [num, setNum] = useState('1')
   const router = useRouter()
   const menus = (
     <Menu>
@@ -98,12 +97,7 @@ const App = (props = {}) => {
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['1']}
-            // selectedKeys={[num]}
-            // onClick={(item) => {
-            //   console.log(111, item)
-            //   // setNum(key)
-            // }}
+            defaultSelectedKeys={[tab]}
             items={menu.map((item, index) => {
               const key = index + 1
               return {
