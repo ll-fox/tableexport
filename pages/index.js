@@ -281,7 +281,7 @@ const Home = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 400px)' }}
+          scroll={{ y: 'calc(100vh - 320px)' }}
           onChange={onChange}
         />
         <TableFrom

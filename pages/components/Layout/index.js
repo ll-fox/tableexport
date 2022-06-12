@@ -42,6 +42,13 @@ const App = (props = {}) => {
           <a>售后反馈</a>
         </Link>
       )
+    },
+    {
+      label: (
+        <Link href="/orderForm">
+          <a>订单管理</a>
+        </Link>
+      )
     }
   ]
   return (
@@ -141,6 +148,7 @@ const App = (props = {}) => {
         </Content>
         <Footer
           style={{
+            padding: '5px 50px',
             textAlign: 'center'
           }}
         >
