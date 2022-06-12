@@ -1,4 +1,4 @@
-import { TABLE_HEADER } from '../orderForm/constant'
+import { TABLE_HEADER } from '../../public/static/constant'
 import moment from 'moment'
 const AV = require('leancloud-storage')
 

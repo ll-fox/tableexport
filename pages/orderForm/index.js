@@ -4,12 +4,11 @@ import { UploadOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
-import { findKey } from 'loadsh'
 import App from '../components/Layout/index'
 import style from './index.module.css'
 import AfterForm from '../components/AfterForm'
 import { pushItem, fetchTable } from '../api/orderForm'
-import { TABLE_HEADER } from './constant'
+import { TABLE_HEADER } from '../../public/static/constant'
 
 const Home = () => {
   const [data, setData] = useState([])
