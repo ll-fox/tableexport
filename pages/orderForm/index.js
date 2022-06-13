@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Upload } from 'antd'
+import { Table, Input, Button, Space, Upload, DatePicker } from 'antd'
+import moment from 'moment'
 import { UploadOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
 import App from '../components/Layout/index'
 import style from './index.module.css'
-import AfterForm from '../components/AfterForm'
+import OrderForm from '../components/OrderForm'
 import { pushItem, fetchTable } from '../api/orderForm'
 import { TABLE_HEADER } from '../../public/static/constant'
 
@@ -21,12 +22,12 @@ const Home = () => {
 
   const searchInput = useRef(null)
   useEffect(() => {
-    fetchData()
+    fetchData(moment().format('YYYYMMDD'))
   }, [isModalVisible])
 
-  const fetchData = () => {
+  const fetchData = (date) => {
     setLoading(true)
-    fetchTable().then((res) => {
+    fetchTable(date).then((res) => {
       setData((res || []).reverse())
       setChangeData(res)
       setLoading(false)
@@ -142,7 +143,7 @@ const Home = () => {
       dataIndex: Object.values(TABLE_HEADER)[0],
       key: Object.values(TABLE_HEADER)[0],
       fixed: 'left',
-      ...getColumnSearchProps('date')
+      ...getColumnSearchProps(Object.values(TABLE_HEADER)[0])
     },
     {
       title: Object.keys(TABLE_HEADER)[1],
@@ -158,13 +159,13 @@ const Home = () => {
       title: Object.keys(TABLE_HEADER)[3],
       dataIndex: Object.values(TABLE_HEADER)[3],
       key: Object.values(TABLE_HEADER)[3],
-      ...getColumnSearchProps('odd')
+      ...getColumnSearchProps(Object.values(TABLE_HEADER)[3])
     },
     {
       title: Object.keys(TABLE_HEADER)[4],
       dataIndex: Object.values(TABLE_HEADER)[4],
       key: Object.values(TABLE_HEADER)[4],
-      ...getColumnSearchProps('odd')
+      ...getColumnSearchProps(Object.values(TABLE_HEADER)[4])
     },
     {
       title: Object.keys(TABLE_HEADER)[5],
@@ -189,7 +190,8 @@ const Home = () => {
     {
       title: Object.keys(TABLE_HEADER)[9],
       dataIndex: Object.values(TABLE_HEADER)[9],
-      key: Object.values(TABLE_HEADER)[9]
+      key: Object.values(TABLE_HEADER)[9],
+      ...getColumnSearchProps(Object.values(TABLE_HEADER)[9])
     },
     {
       title: Object.keys(TABLE_HEADER)[10],
@@ -232,6 +234,16 @@ const Home = () => {
       key: Object.values(TABLE_HEADER)[17]
     },
     {
+      title: Object.keys(TABLE_HEADER)[18],
+      dataIndex: Object.values(TABLE_HEADER)[18],
+      key: Object.values(TABLE_HEADER)[18]
+    },
+    {
+      title: Object.keys(TABLE_HEADER)[19],
+      dataIndex: Object.values(TABLE_HEADER)[19],
+      key: Object.values(TABLE_HEADER)[19]
+    },
+    {
       title: '操作',
       dataIndex: '',
       key: 'x',
@@ -257,41 +269,24 @@ const Home = () => {
     setChangeData(extra.currentDataSource)
   }
 
+  const onChangeDate = (date, dateString) => {
+    fetchData(dateString)
+  }
+
   const exportTable = () => {
-    let sheetFilter = [
-      'date',
-      'platform',
-      'expressage',
-      'odd',
-      'username',
-      'phone',
-      'address',
-      'reason',
-      'dealwith',
-      'result',
-      'price'
-    ]
+    let sheetFilter = Object.values(TABLE_HEADER)
     let option = {}
-    option.fileName = '售后反馈'
+    option.fileName = '订单详情'
     option.datas = [
       {
         sheetData: changeData,
-        sheetName: '售后反馈',
+        sheetName: '订单详情',
         sheetFilter: sheetFilter,
-        sheetHeader: [
-          '售后反馈日期',
-          '平台名称',
-          '快递公司',
-          '快递单号',
-          '收件人',
-          '电话',
-          '地址',
-          '售后原因',
-          '是否已处理',
-          '处理结果',
-          '售后金额'
-        ],
-        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]
+        sheetHeader: Object.keys(TABLE_HEADER),
+        columnWidths: [
+          5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5,
+          10, 5, 5, 5, 5, 5, 5, 5, 10
+        ]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new
@@ -337,19 +332,34 @@ const Home = () => {
     <App tab="3">
       <div>
         <div className={style.top}>
-          <Upload
-            accept=".xls , .xlsx"
-            maxCount={1}
-            showUploadList={false}
-            customRequest={HandleImportFile}
-          >
-            <Button icon={<UploadOutlined />} type="primary">
-              上传文件
+          <DatePicker
+            defaultValue={moment()}
+            format="YYYYMMDD"
+            onChange={onChangeDate}
+          />
+          <div>
+            <Upload
+              accept=".xls , .xlsx"
+              maxCount={1}
+              showUploadList={false}
+              customRequest={HandleImportFile}
+            >
+              <Button icon={<UploadOutlined />} type="primary">
+                上传文件
+              </Button>
+            </Upload>
+            <Button
+              style={{
+                marginLeft: '10px'
+              }}
+              type="primary"
+              onClick={exportTable}
+              danger
+              ghost
+            >
+              导出
             </Button>
-          </Upload>
-          <Button type="primary" onClick={exportTable} danger ghost>
-            导出
-          </Button>
+          </div>
         </div>
         <Table
           loading={loading}
@@ -361,10 +371,10 @@ const Home = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 320px)', x: 3800 }}
+          scroll={{ y: 'calc(100vh - 320px)', x: 4200 }}
           onChange={onChange}
         />
-        <AfterForm
+        <OrderForm
           isModalVisible={isModalVisible}
           data={itemData}
           handleCancel={handleCancel}

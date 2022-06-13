@@ -14,6 +14,7 @@ const pushItem = async (val) => {
     const QA = new AV.Object('ORDER')
     Object.keys(item).forEach((element) => {
       abject.JWNYPurchaseOrder = `JWNY${moment().format('yyyyMMDD')}${index}`
+      abject.amount = 100
       if (item[element]) {
         abject[TABLE_HEADER[element]] = item[element]
       }
@@ -34,9 +35,10 @@ const updateItem = async (val, id) => {
   }
 }
 
-const fetchTable = async () => {
+const fetchTable = async (val) => {
   const QA = new AV.Query('ORDER')
   try {
+    QA.equalTo('date', Number(val))
     const data = await QA.find()
     const records = data.reverse().map((x) => {
       const json = x.toJSON()
