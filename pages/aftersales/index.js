@@ -5,7 +5,7 @@ import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
 import App from '../components/Layout/index'
 import style from './index.module.css'
-import AfterForm from '../components/AfterForm'
+import AfterModal from '../components/AfterModal'
 import { fetchTable } from '../api/aftersales'
 
 const Home = () => {
@@ -256,7 +256,7 @@ const Home = () => {
   }
 
   return (
-    <App tab="2">
+    <App tab={'aftersales'}>
       <div>
         <div className={style.top}>
           <Button type="primary" onClick={() => showModal({})}>
@@ -279,7 +279,7 @@ const Home = () => {
           scroll={{ y: 'calc(100vh - 320px)' }}
           onChange={onChange}
         />
-        <AfterForm
+        <AfterModal
           isModalVisible={isModalVisible}
           data={itemData}
           handleCancel={handleCancel}

@@ -257,7 +257,7 @@ const Home = () => {
   }
 
   return (
-    <App tab={'1'}>
+    <App tab={'home'}>
       <div>
         <div className={style.top}>
           <Button type="primary" onClick={() => showModal({})}>
@@ -272,8 +272,6 @@ const Home = () => {
           columns={columns}
           dataSource={data}
           total={data.length}
-          showSizeChanger
-          showQuickJumper
           showTotal={(total) => `Total ${total} items`}
           pagination={{
             total: data.length,

@@ -8,7 +8,7 @@ AV.init({
   serverURL: 'https://rgjng8ep.api.lncldglobal.com'
 })
 
-const pushItem = async (val) => {
+const pushItem = async (val, unitPrice) => {
   const objects = (val || []).map((item, index) => {
     const abject = {}
     const QA = new AV.Object('ORDER')

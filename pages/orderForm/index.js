@@ -1,5 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Upload, DatePicker } from 'antd'
+import {
+  Table,
+  Input,
+  Button,
+  Space,
+  Upload,
+  DatePicker,
+  InputNumber
+} from 'antd'
 import moment from 'moment'
 import { UploadOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
@@ -7,25 +15,27 @@ import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
 import App from '../components/Layout/index'
 import style from './index.module.css'
-import OrderForm from '../components/OrderForm'
+import OrderForm from '../components/OrderModal'
 import { pushItem, fetchTable } from '../api/orderForm'
 import { TABLE_HEADER } from '../../public/static/constant'
 
 const Home = () => {
   const [data, setData] = useState([])
+  const [unitPrice, setUnitPrice] = useState('')
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [itemData, setItemData] = useState({})
   const [changeData, setChangeData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [date, setDate] = useState(moment().format('YYYYMMDD'))
 
   const searchInput = useRef(null)
   useEffect(() => {
-    fetchData(moment().format('YYYYMMDD'))
-  }, [isModalVisible])
+    fetchData()
+  }, [isModalVisible, date])
 
-  const fetchData = (date) => {
+  const fetchData = () => {
     setLoading(true)
     fetchTable(date).then((res) => {
       setData((res || []).reverse())
@@ -270,7 +280,13 @@ const Home = () => {
   }
 
   const onChangeDate = (date, dateString) => {
-    fetchData(dateString)
+    console.log(123, dateString)
+    setDate(dateString)
+  }
+
+  const onChangeNumber = (val) => {
+    setUnitPrice(val)
+    console.log(val)
   }
 
   const exportTable = () => {
@@ -316,7 +332,7 @@ const Home = () => {
           // if (workbook.Sheets.hasOwnProperty(sheet)) {
           // 将获取到表中的数据转化为json格式
           data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
-          pushItem(data).then(() => {
+          pushItem(data, unitPrice).then(() => {
             fetchData()
           })
           // }
@@ -329,22 +345,38 @@ const Home = () => {
   }
 
   return (
-    <App tab="3">
+    <App tab="orderForm">
       <div>
         <div className={style.top}>
-          <DatePicker
-            defaultValue={moment()}
-            format="YYYYMMDD"
-            onChange={onChangeDate}
-          />
           <div>
+            日期：
+            <DatePicker
+              defaultValue={moment()}
+              format="YYYYMMDD"
+              onChange={onChangeDate}
+            />
+          </div>
+
+          <div>
+            <InputNumber
+              min={0}
+              placeholder="输入单价后上传文件！"
+              addonBefore="单价"
+              style={{ marginRight: '20px' }}
+              onChange={onChangeNumber}
+            />
             <Upload
               accept=".xls , .xlsx"
               maxCount={1}
               showUploadList={false}
               customRequest={HandleImportFile}
+              disabled={!Boolean(unitPrice)}
             >
-              <Button icon={<UploadOutlined />} type="primary">
+              <Button
+                disabled={!Boolean(unitPrice)}
+                icon={<UploadOutlined />}
+                type="primary"
+              >
                 上传文件
               </Button>
             </Upload>
@@ -371,7 +403,7 @@ const Home = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 320px)', x: 4200 }}
+          scroll={{ y: 'calc(100vh - 300px)', x: 4200 }}
           onChange={onChange}
         />
         <OrderForm

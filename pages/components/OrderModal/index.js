@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, Input, Modal, InputNumber, message, Select } from 'antd'
 import 'moment/locale/zh-cn'
 import { updateItem } from '../../api/orderForm'
@@ -9,12 +9,14 @@ const { Option } = Select
 const TableForm = (props) => {
   const [form] = Form.useForm()
   const { handleCancel, handleOk, isModalVisible, data } = props
+  const [loading, setLoading] = useState(false)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
   }
   const onFinish = () => {
     form.validateFields().then((values) => {
+      setLoading(true)
       updateItem(values, data.objectId).then((res) => {
         if (res) {
           message.success('修改成功！')
@@ -23,6 +25,7 @@ const TableForm = (props) => {
         } else {
           message.error('修改失败！')
         }
+        setLoading(false)
       })
     })
   }
@@ -35,6 +38,7 @@ const TableForm = (props) => {
       onCancel={handleCancel}
       getContainer={false}
       width={'60%'}
+      confirmLoading={loading}
       destroyOnClose
     >
       <Form
@@ -45,7 +49,7 @@ const TableForm = (props) => {
         initialValues={newData}
         preserve={false}
         style={{
-          height: '520px',
+          height: '450px',
           overflow: 'auto'
         }}
       >
@@ -62,7 +66,7 @@ const TableForm = (props) => {
           <Input />
         </Form.Item>
         <Form.Item name="ReceiverTel" label="收件人电话">
-          <Input />
+          <InputNumber min={0} style={{ width: '60%' }} />
         </Form.Item>
         <Form.Item name="ReceiverAdd" label="收件人地址">
           <Input />
@@ -71,7 +75,7 @@ const TableForm = (props) => {
           <Input />
         </Form.Item>
         <Form.Item name="shipperTel" label="发件人电话">
-          <Input />
+          <InputNumber min={0} style={{ width: '60%' }} />
         </Form.Item>
         <Form.Item name="spece" label="规格名称">
           <Input />

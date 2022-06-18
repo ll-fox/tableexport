@@ -30,25 +30,42 @@ const App = (props = {}) => {
   )
   const menu = [
     {
+      label: '商品管理',
+      key: 'subMenu',
+      children: [
+        {
+          label: (
+            <Link href="/product">
+              <a>商品列表</a>
+            </Link>
+          ),
+          key: 'product'
+        }
+      ]
+    },
+    {
       label: (
         <Link href="/">
           <a>进库详情</a>
         </Link>
-      )
+      ),
+      key: 'home'
     },
     {
       label: (
         <Link href="/aftersales">
           <a>售后反馈</a>
         </Link>
-      )
+      ),
+      key: 'aftersales'
     },
     {
       label: (
         <Link href="/orderForm">
           <a>订单管理</a>
         </Link>
-      )
+      ),
+      key: 'orderForm'
     }
   ]
   return (
@@ -65,16 +82,18 @@ const App = (props = {}) => {
             width: 240px;
             height: 64px;
             display: flex;
-            color: #fff;
+            color: rgba(0, 0, 0, 0.8);
             font-size: 24px;
             font-weight: STLiti;
             font-weight: 800;
             font-family: cursive;
-            margin-right: 15px;
           }
           .ant-row-rtl #components-layout-demo-top .logo {
             float: right;
             margin: 16px 0 16px 24px;
+          }
+          .ant-menu-horizontal {
+            border-bottom: 0;
           }
         `}</style>
         <Header
@@ -83,7 +102,8 @@ const App = (props = {}) => {
             position: 'fixed',
             width: '100%',
             zIndex: '999',
-            display: 'flex'
+            display: 'flex',
+            background: '#ffff'
           }}
         >
           <div className="logo">
@@ -102,16 +122,11 @@ const App = (props = {}) => {
             金翁农业系统
           </div>
           <Menu
-            theme="dark"
+            // theme="dark"
             mode="horizontal"
             defaultSelectedKeys={[tab]}
-            items={menu.map((item, index) => {
-              const key = index + 1
-              return {
-                key,
-                label: item.label
-              }
-            })}
+            items={menu}
+            style={{ borderBottom: '0' }}
           />
           <div
             style={{
@@ -120,7 +135,7 @@ const App = (props = {}) => {
             }}
           >
             <Dropdown placement="bottom" overlay={menus} arrow>
-              <a style={{ color: '#FFF' }} onClick={(e) => e.preventDefault()}>
+              <a style={{ color: '#000' }} onClick={(e) => e.preventDefault()}>
                 <Space>
                   <UserOutlined style={{ fontSize: '20px' }} />
                   {user?.username}
@@ -138,7 +153,7 @@ const App = (props = {}) => {
         >
           <Breadcrumb
             style={{
-              margin: '16px 0'
+              margin: '10px 0'
             }}
           >
             {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
