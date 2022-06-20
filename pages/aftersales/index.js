@@ -157,7 +157,7 @@ const Home = () => {
       title: '收件人',
       dataIndex: 'username',
       key: 'username',
-      ...getColumnSearchProps('odd')
+      ...getColumnSearchProps('username')
     },
     {
       title: '电话',

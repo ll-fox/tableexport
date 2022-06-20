@@ -139,7 +139,7 @@ const Expressage = () => {
       title: '快递公司',
       dataIndex: 'expressage',
       key: 'expressage',
-      ...getColumnSearchProps('produceName')
+      ...getColumnSearchProps('expressage')
     },
     {
       title: '加价区域',
