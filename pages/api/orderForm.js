@@ -1,5 +1,6 @@
 import { TABLE_HEADER } from '../../public/static/constant'
 import moment from 'moment'
+import { find } from 'loadsh'
 const AV = require('leancloud-storage')
 
 AV.init({
@@ -9,11 +10,14 @@ AV.init({
 })
 
 const pushItem = async (val, unitPrice) => {
+  const count = await fetchCount()
   const objects = (val || []).map((item, index) => {
     const abject = {}
     const QA = new AV.Object('ORDER')
     Object.keys(item).forEach((element) => {
-      abject.JWNYPurchaseOrder = `JWNY${moment().format('yyyyMMDD')}${index}`
+      abject.JWNYPurchaseOrder = `JWNY${moment().format('yyyyMMDD')}${
+        count + index
+      }`
       abject.amount = 100
       if (item[element]) {
         abject[TABLE_HEADER[element]] = item[element]
@@ -45,6 +49,15 @@ const fetchTable = async (val) => {
       return json
     })
     return records
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const fetchCount = async () => {
+  const QA = new AV.Query('ORDER')
+  try {
+    return QA.count()
   } catch (e) {
     console.log(e)
   }

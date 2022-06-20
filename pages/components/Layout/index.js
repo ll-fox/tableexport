@@ -40,6 +40,14 @@ const App = (props = {}) => {
             </Link>
           ),
           key: 'product'
+        },
+        {
+          label: (
+            <Link href="/expressage">
+              <a>快递管理</a>
+            </Link>
+          ),
+          key: 'expressage'
         }
       ]
     },
@@ -79,7 +87,7 @@ const App = (props = {}) => {
           }
           .logo {
             float: left;
-            width: 240px;
+            width: 190px;
             height: 64px;
             display: flex;
             color: rgba(0, 0, 0, 0.8);
@@ -107,19 +115,14 @@ const App = (props = {}) => {
           }}
         >
           <div className="logo">
-            <span
-              style={{
-                marginTop: '8px'
-              }}
-            >
+            <span>
               <Images
                 alt="ll"
-                width={70}
-                height={50}
+                width={182}
+                height={64}
                 src={'/images/logo.png'}
               />
             </span>
-            金翁农业系统
           </div>
           <Menu
             // theme="dark"

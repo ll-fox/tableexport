@@ -1,31 +1,35 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Modal, Form, DatePicker } from 'antd'
-import Highlighter from 'react-highlight-words'
-import ExportJsonExcel from 'js-export-excel'
+import { Table, Input, Button, Space, Select, Typography, Divider } from 'antd'
+import App from '../components/Layout/index'
 import { SearchOutlined } from '@ant-design/icons'
-import App from './components/Layout/index'
-import style from '../styles/Home.module.css'
-import TableFrom from './components/TableForm'
-import { fetchTable } from './api/home'
+import Highlighter from 'react-highlight-words'
+import style from './index.module.css'
+import ExpressageModal from '../components/ExpressageModal'
+import { fetchExpressage } from '../api/expressage'
 
-const Home = () => {
+const { Option } = Select
+const Expressage = () => {
   const [data, setData] = useState([])
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [itemData, setItemData] = useState({})
-  const [changeData, setChangeData] = useState([])
   const [loading, setLoading] = useState(false)
-
+  const [items, setItems] = useState([])
+  const [searchText, setSearchText] = useState('')
+  const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef(null)
+
   useEffect(() => {
+    fetchData()
+  }, [isModalVisible])
+
+  const fetchData = (val) => {
+    val = val === '所有平台' ? '' : val
     setLoading(true)
-    fetchTable().then((res) => {
+    fetchExpressage(val || '').then((res) => {
       setData(res)
-      setChangeData(res)
       setLoading(false)
     })
-  }, [isModalVisible])
+  }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -73,7 +77,7 @@ const Home = () => {
               width: 90
             }}
           >
-            Search
+            搜索
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -82,7 +86,7 @@ const Home = () => {
               width: 90
             }}
           >
-            Reset
+            重制
           </Button>
           <Button
             type="link"
@@ -95,7 +99,7 @@ const Home = () => {
               setSearchedColumn(dataIndex)
             }}
           >
-            Filter
+            过滤
           </Button>
         </Space>
       </div>
@@ -132,74 +136,28 @@ const Home = () => {
 
   const columns = [
     {
-      title: '送货日期',
-      dataIndex: 'date',
-      key: 'date',
-      ...getColumnSearchProps('date')
+      title: '快递公司',
+      dataIndex: 'expressage',
+      key: 'expressage',
+      ...getColumnSearchProps('produceName')
     },
     {
-      title: '类别',
-      dataIndex: 'type',
-      key: 'type'
+      title: '加价区域',
+      dataIndex: 'raisePriceArea',
+      key: 'raisePriceArea'
     },
     {
-      title: '供应商名称',
-      dataIndex: 'supplierName',
-      key: 'supplierName'
-    },
-    {
-      title: '规格名称',
-      dataIndex: 'name',
-      key: 'name',
-      ...getColumnSearchProps('name')
-    },
-    {
-      title: '数量',
-      dataIndex: 'num',
-      key: 'num',
-      sorter: {
-        compare: (a, b) => a.num - b.num
-        // multiple: 3
-      },
-      sortDirections: ['descend', 'ascend']
-    },
-    {
-      title: '单价',
-      dataIndex: 'unitPrice',
-      key: 'unitPrice'
-    },
-    {
-      title: '金额/元',
-      dataIndex: 'price',
-      sorter: {
-        compare: (a, b) => a.price - b.price
-        // multiple: 3
-      },
-      key: 'price'
-    },
-    {
-      title: '付款日期',
-      dataIndex: 'rePriceDate',
-      key: 'rePriceDate'
-    },
-    {
-      title: '付款金额',
-      dataIndex: 'rePrice',
-      key: 'rePrice'
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      key: 'remark'
+      title: '加价金额',
+      dataIndex: 'raisePrice',
+      key: 'raisePrice'
     },
     {
       title: '操作',
       dataIndex: '',
       key: 'x',
-      render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
+      render: (val, re) => <a onClick={() => showModal(re)}>修改</a>
     }
   ]
-
   const showModal = (re) => {
     setItemData(re)
     setIsModalVisible(true)
@@ -213,74 +171,30 @@ const Home = () => {
     setIsModalVisible(false)
   }
 
-  const onChange = (pagination, filters, sorter, extra) => {
-    setChangeData(extra.currentDataSource)
-  }
-
-  const exportTable = () => {
-    let sheetFilter = [
-      'date',
-      'type',
-      'supplierName',
-      'name',
-      'num',
-      'unitPrice',
-      'price',
-      'rePriceDate',
-      'rePrice',
-      'remark'
-    ]
-    let option = {}
-    option.fileName = '出货单'
-    option.datas = [
-      {
-        sheetData: changeData,
-        sheetName: '出货单',
-        sheetFilter: sheetFilter,
-        sheetHeader: [
-          '送货日期',
-          '类别',
-          '供应商名称',
-          '规格名称',
-          '数量',
-          '单价',
-          '金额/元',
-          '付款日期',
-          '付款金额',
-          '备注'
-        ],
-        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]
-      }
-    ]
-    const toExcel = new ExportJsonExcel(option) //new
-    toExcel.saveExcel() //保存
-  }
-
   return (
-    <App tab={'home'}>
+    <App tab={'expressage'}>
       <div>
         <div className={style.top}>
-          <Button type="primary" onClick={() => showModal({})}>
-            新增
-          </Button>
-          <Button type="primary" onClick={exportTable} danger ghost>
-            导出
-          </Button>
+          <div>
+            <Button type="primary" onClick={() => showModal({})}>
+              +添加快递
+            </Button>
+          </div>
         </div>
         <Table
           loading={loading}
           columns={columns}
           dataSource={data}
           pagination={{
-            total: data.length,
+            total: (data || []).length,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
           scroll={{ y: 'calc(100vh - 320px)' }}
-          onChange={onChange}
         />
-        <TableFrom
+        <ExpressageModal
+          items={items}
           isModalVisible={isModalVisible}
           data={itemData}
           handleCancel={handleCancel}
@@ -291,4 +205,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Expressage

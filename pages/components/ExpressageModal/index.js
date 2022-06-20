@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { Form, Input, Modal, InputNumber, message, Select } from 'antd'
 import 'moment/locale/zh-cn'
-import { updateProduct, addProduct } from '../../api/product'
+import { updateExpressage, addExpressage } from '../../api/expressage'
 import moment from 'moment'
 import { cloneDeep, isEmpty } from 'lodash'
+import { PROVINCES } from '../../../public/static/constant'
+
 const { Option } = Select
 
-const ProductModal = (props) => {
+const ExpressageModal = (props) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const { handleCancel, handleOk, isModalVisible, data, items } = props
+  const { handleCancel, handleOk, isModalVisible, data } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -18,7 +20,7 @@ const ProductModal = (props) => {
     form.validateFields().then((values) => {
       setLoading(true)
       if (isEmpty(data)) {
-        addProduct(values).then((res) => {
+        addExpressage(values).then((res) => {
           if (res) {
             setLoading(false)
             message.success('保存成功！')
@@ -30,7 +32,7 @@ const ProductModal = (props) => {
           }
         })
       } else {
-        updateProduct(values, data.objectId).then((res) => {
+        updateExpressage(values, data.objectId).then((res) => {
           if (res) {
             setLoading(false)
             message.success('修改成功！')
@@ -47,7 +49,7 @@ const ProductModal = (props) => {
 
   return (
     <Modal
-      title="商品信息"
+      title="加价信息"
       visible={isModalVisible}
       onOk={onFinish}
       onCancel={handleCancel}
@@ -68,76 +70,48 @@ const ProductModal = (props) => {
         }}
       >
         <Form.Item
-          name="platform"
-          label="平台名称"
+          name="expressage"
+          label="快递公司"
           rules={[
             {
               required: true,
-              message: '请选择平台名称!'
-            }
-          ]}
-        >
-          <Select>
-            {(items || []).map((item) => (
-              <Option key={item.name}>{item.name}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="produceName"
-          label="项目名称"
-          rules={[
-            {
-              required: true,
-              message: '请输入项目名称!'
+              message: '请选择公司名称!'
             }
           ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          name="spece"
-          label="商品规格名称"
+          name="raisePriceArea"
+          label="加价区域"
           rules={[
             {
               required: true,
-              message: '请输入商品规格名称!'
+              message: '请选择加价区域!'
             }
           ]}
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="price"
-          label="供应价格"
-          rules={[
-            {
-              required: true,
-              message: '请输入供应价格!'
-            }
-          ]}
-        >
-          <InputNumber min={1} addonAfter="元" />
-        </Form.Item>
-        <Form.Item
-          name="auditor"
-          label="审核人"
-          rules={[
-            {
-              required: true,
-              message: '请选择审核人!'
-            }
-          ]}
-        >
-          <Select>
-            {['杨一凡', '米佳乐', '石喆'].map((name) => (
+          <Select showSearch>
+            {PROVINCES.map((name) => (
               <Option key={name}>{name}</Option>
             ))}
           </Select>
+        </Form.Item>
+        <Form.Item
+          name="raisePrice"
+          label="加价金额"
+          rules={[
+            {
+              required: true,
+              message: '请输入加价金额!'
+            }
+          ]}
+        >
+          <InputNumber min={0} addonAfter="元" />
         </Form.Item>
       </Form>
     </Modal>
   )
 }
 
-export default ProductModal
+export default ExpressageModal

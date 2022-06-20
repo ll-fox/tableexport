@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Table, Input, Button, Space, Select, Typography, Divider } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import App from '../components/Layout/index'
+import { SearchOutlined } from '@ant-design/icons'
+import Highlighter from 'react-highlight-words'
 import style from './index.module.css'
 import ProductModal from '../components/ProductModal'
 import { fetchTable, fetchPlatform, addPlatform } from '../api/product'
@@ -14,7 +16,9 @@ const Product = () => {
   const [loading, setLoading] = useState(false)
   const [items, setItems] = useState([])
   const [name, setName] = useState('')
-
+  const [searchText, setSearchText] = useState('')
+  const [searchedColumn, setSearchedColumn] = useState('')
+  const searchInput = useRef(null)
   useEffect(() => {
     fetchPlat()
   }, [])
@@ -38,6 +42,109 @@ const Product = () => {
     })
   }
 
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm()
+    setSearchText(selectedKeys[0])
+    setSearchedColumn(dataIndex)
+  }
+
+  const handleReset = (clearFilters) => {
+    clearFilters()
+    setSearchText('')
+  }
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
+      <div
+        style={{
+          padding: 8
+        }}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block'
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90
+            }}
+          >
+            搜索
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90
+            }}
+          >
+            重制
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false
+              })
+              setSearchText(selectedKeys[0])
+              setSearchedColumn(dataIndex)
+            }}
+          >
+            过滤
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100)
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: '#ffc069',
+            padding: 0
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      )
+  })
+
   const columns = [
     {
       title: '平台名称',
@@ -45,27 +152,18 @@ const Product = () => {
       key: 'platform'
     },
     {
-      title: '商品名称',
+      title: '项目名称',
       dataIndex: 'produceName',
-      key: 'produceName'
+      key: 'produceName',
+      ...getColumnSearchProps('produceName')
     },
     {
-      title: '商品分类',
-      dataIndex: 'type',
-      key: 'type'
+      title: '商品规格名称',
+      dataIndex: 'spece',
+      key: 'spece'
     },
     {
-      title: '套餐数量',
-      dataIndex: 'num',
-      key: 'num',
-      sorter: {
-        compare: (a, b) => a.num - b.num
-        // multiple: 3
-      },
-      sortDirections: ['descend', 'ascend']
-    },
-    {
-      title: '价格',
+      title: '供应价格',
       dataIndex: 'price',
       key: 'price',
       sorter: {
@@ -75,9 +173,10 @@ const Product = () => {
       sortDirections: ['descend', 'ascend']
     },
     {
-      title: '上架状态',
-      dataIndex: 'state',
-      key: 'state'
+      title: '审核人',
+      dataIndex: 'auditor',
+      key: 'auditor',
+      ...getColumnSearchProps('auditor')
     },
     {
       title: '操作',
@@ -86,7 +185,6 @@ const Product = () => {
       render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
     }
   ]
-
   const showModal = (re) => {
     setItemData(re)
     setIsModalVisible(true)
@@ -178,8 +276,6 @@ const Product = () => {
           loading={loading}
           columns={columns}
           dataSource={data}
-          total={(data || []).length}
-          showTotal={(total) => `Total ${total} items`}
           pagination={{
             total: (data || []).length,
             showSizeChanger: true,

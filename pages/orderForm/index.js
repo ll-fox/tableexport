@@ -317,6 +317,7 @@ const Home = () => {
     let suffix = name.substr(name.lastIndexOf('.'))
     let reader = new FileReader()
     reader.onload = (event) => {
+      setLoading(true)
       try {
         // 判断文件类型是否正确
         if ('.xls' != suffix && '.xlsx' != suffix) {
@@ -332,11 +333,11 @@ const Home = () => {
           // if (workbook.Sheets.hasOwnProperty(sheet)) {
           // 将获取到表中的数据转化为json格式
           data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
-          pushItem(data, unitPrice).then(() => {
-            fetchData()
-          })
           // }
         }
+        pushItem(data, unitPrice).then(() => {
+          fetchData()
+        })
       } catch (e) {
         message.error('文件类型不正确！')
       }
