@@ -87,11 +87,12 @@ const ExpressageModal = (props) => {
           rules={[
             {
               required: true,
+              type: 'array',
               message: '请选择加价区域!'
             }
           ]}
         >
-          <Select showSearch>
+          <Select showSearch mode="multiple">
             {PROVINCES.map((name) => (
               <Option key={name}>{name}</Option>
             ))}

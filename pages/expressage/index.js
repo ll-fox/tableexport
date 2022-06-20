@@ -144,7 +144,8 @@ const Expressage = () => {
     {
       title: '加价区域',
       dataIndex: 'raisePriceArea',
-      key: 'raisePriceArea'
+      key: 'raisePriceArea',
+      render: (val) => val.join(', ')
     },
     {
       title: '加价金额',
