@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Modal, Form, DatePicker } from 'antd'
+import { Table, Input, Button, Space, Tooltip, Form, DatePicker } from 'antd'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
 import { SearchOutlined } from '@ant-design/icons'
@@ -135,6 +135,7 @@ const Home = () => {
       title: '送货日期',
       dataIndex: 'date',
       key: 'date',
+      width: 130,
       ...getColumnSearchProps('date')
     },
     {
@@ -145,12 +146,14 @@ const Home = () => {
     {
       title: '供应商名称',
       dataIndex: 'supplierName',
+      width: 200,
       key: 'supplierName'
     },
     {
       title: '规格名称',
       dataIndex: 'name',
       key: 'name',
+      width: 150,
       ...getColumnSearchProps('name')
     },
     {
@@ -180,7 +183,8 @@ const Home = () => {
     {
       title: '付款日期',
       dataIndex: 'rePriceDate',
-      key: 'rePriceDate'
+      key: 'rePriceDate',
+      width: 130
     },
     {
       title: '付款金额',
@@ -190,7 +194,14 @@ const Home = () => {
     {
       title: '备注',
       dataIndex: 'remark',
-      key: 'remark'
+      key: 'remark',
+      ellipsis: true,
+      width: 150,
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: '操作',

@@ -1,8 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space } from 'antd'
+import { Table, Input, Button, Space, Tooltip, Tag } from 'antd'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
-import { SearchOutlined } from '@ant-design/icons'
+import {
+  SearchOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined
+} from '@ant-design/icons'
 import App from '../components/Layout/index'
 import style from './index.module.css'
 import AfterModal from '../components/AfterModal'
@@ -135,64 +139,106 @@ const Home = () => {
       title: '售后反馈日期',
       dataIndex: 'date',
       key: 'date',
+      width: 140,
+      fixed: 'left',
       ...getColumnSearchProps('date')
     },
     {
       title: '平台名称',
       dataIndex: 'platform',
+      width: 110,
       key: 'platform'
     },
     {
       title: '快递公司',
       dataIndex: 'expressage',
+      width: 100,
       key: 'expressage'
     },
     {
       title: '快递单号',
       dataIndex: 'odd',
       key: 'odd',
+      width: 180,
       ...getColumnSearchProps('odd')
     },
     {
       title: '收件人',
       dataIndex: 'username',
+      width: 100,
       key: 'username',
       ...getColumnSearchProps('username')
     },
     {
       title: '电话',
       dataIndex: 'phone',
+      width: 140,
       key: 'phone'
     },
     {
       title: '地址',
       dataIndex: 'address',
-      key: 'address'
+      key: 'address',
+      width: 180,
+      ellipsis: true,
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: '售后原因',
       dataIndex: 'reason',
-      key: 'reason'
+      width: 180,
+      ellipsis: true,
+      key: 'reason',
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: '是否已处理',
       dataIndex: 'dealwith',
-      key: 'dealwith'
+      width: 120,
+      key: 'dealwith',
+      render: (val) => (
+        <Tag
+          icon={
+            val === '是' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+          }
+          color={val === '是' ? '#55acee' : '#cd201f'}
+        >
+          {val}
+        </Tag>
+      )
     },
     {
       title: '处理结果',
       dataIndex: 'result',
-      key: 'result'
+      width: 130,
+      ellipsis: true,
+      key: 'result',
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: '售后金额',
       dataIndex: 'price',
+      width: 100,
       key: 'price'
     },
     {
       title: '操作',
       dataIndex: '',
+      width: 80,
       key: 'x',
+      fixed: 'right',
       render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
     }
   ]
@@ -276,7 +322,7 @@ const Home = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 320px)' }}
+          scroll={{ y: 'calc(100vh - 300px)', x: 1500 }}
           onChange={onChange}
         />
         <AfterModal
