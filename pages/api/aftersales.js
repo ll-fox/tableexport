@@ -43,4 +43,10 @@ const fetchTable = async () => {
   }
 }
 
-export { addItem, fetchTable, updateItem }
+const judgeContains = async (val) => {
+  const QA = new AV.Query('Aftersales')
+  QA.equalTo('odd', val)
+  return QA.find()
+}
+
+export { addItem, fetchTable, updateItem, judgeContains }

@@ -1,13 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import {
-  Table,
-  Input,
-  Button,
-  Space,
-  Upload,
-  DatePicker,
-  InputNumber
-} from 'antd'
+import { Table, Input, Button, Space, Upload, DatePicker } from 'antd'
 import moment from 'moment'
 import { UploadOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
@@ -21,7 +13,6 @@ import { TABLE_HEADER } from '../../public/static/constant'
 
 const Home = () => {
   const [data, setData] = useState([])
-  const [unitPrice, setUnitPrice] = useState('')
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -280,13 +271,7 @@ const Home = () => {
   }
 
   const onChangeDate = (date, dateString) => {
-    console.log(123, dateString)
     setDate(dateString)
-  }
-
-  const onChangeNumber = (val) => {
-    setUnitPrice(val)
-    console.log(val)
   }
 
   const exportTable = () => {
@@ -335,7 +320,7 @@ const Home = () => {
           data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
           // }
         }
-        pushItem(data, unitPrice).then(() => {
+        pushItem(data).then(() => {
           fetchData()
         })
       } catch (e) {
@@ -359,25 +344,13 @@ const Home = () => {
           </div>
 
           <div>
-            <InputNumber
-              min={0}
-              placeholder="输入单价后上传文件！"
-              addonBefore="单价"
-              style={{ marginRight: '20px' }}
-              onChange={onChangeNumber}
-            />
             <Upload
               accept=".xls , .xlsx"
               maxCount={1}
               showUploadList={false}
               customRequest={HandleImportFile}
-              disabled={!Boolean(unitPrice)}
             >
-              <Button
-                disabled={!Boolean(unitPrice)}
-                icon={<UploadOutlined />}
-                type="primary"
-              >
+              <Button icon={<UploadOutlined />} type="primary">
                 上传文件
               </Button>
             </Upload>

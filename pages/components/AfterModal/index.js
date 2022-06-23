@@ -9,7 +9,7 @@ import {
   Select
 } from 'antd'
 import 'moment/locale/zh-cn'
-import { addItem, updateItem } from '../../api/aftersales'
+import { addItem, updateItem, judgeContains } from '../../api/aftersales'
 import moment from 'moment'
 import { cloneDeep, isEmpty } from 'lodash'
 const { Option } = Select
@@ -35,11 +35,17 @@ const TableForm = (props) => {
     form.validateFields().then((values) => {
       values.date = values.date.format('YYYY-MM-DD')
       if (isEmpty(data)) {
-        addItem(values).then((res) => {
-          if (res) {
-            message.success('保存成功！')
-            form.resetFields()
-            handleOk()
+        judgeContains(values.odd).then((res) => {
+          if (isEmpty(res)) {
+            addItem(values).then((res) => {
+              if (res) {
+                message.success('保存成功！')
+                form.resetFields()
+                handleOk()
+              }
+            })
+          } else {
+            message.error('该订单已经存在于订单里！')
           }
         })
       } else {
@@ -73,6 +79,10 @@ const TableForm = (props) => {
         wrapperCol={{ span: 20 }}
         initialValues={newData}
         preserve={false}
+        style={{
+          height: '450px',
+          overflow: 'auto'
+        }}
       >
         <Form.Item name="date" label="售后反馈日期" {...config}>
           <DatePicker />

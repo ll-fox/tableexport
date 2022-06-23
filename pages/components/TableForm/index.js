@@ -10,7 +10,7 @@ const config = {
     {
       type: 'object',
       required: true,
-      message: 'Please select time!'
+      message: '请选择时间!'
     }
   ]
 }
@@ -69,6 +69,10 @@ const TableForm = (props) => {
         wrapperCol={{ span: 20 }}
         initialValues={newData}
         preserve={false}
+        style={{
+          height: '450px',
+          overflow: 'auto'
+        }}
       >
         <Form.Item name="date" label="送货日期" {...config}>
           <DatePicker />

@@ -48,7 +48,7 @@ const updateProduct = async (val, id) => {
   }
 }
 
-const fetchTable = async (val) => {
+const fetchProduct = async (val) => {
   const Product = new AV.Query('Product')
   try {
     if (val) {
@@ -65,4 +65,4 @@ const fetchTable = async (val) => {
   }
 }
 
-export { fetchTable, updateProduct, addProduct, addPlatform, fetchPlatform }
+export { fetchProduct, updateProduct, addProduct, addPlatform, fetchPlatform }

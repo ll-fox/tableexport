@@ -6,7 +6,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
 import style from './index.module.css'
 import ProductModal from '../components/ProductModal'
-import { fetchTable, fetchPlatform, addPlatform } from '../api/product'
+import { fetchProduct, fetchPlatform, addPlatform } from '../api/product'
 
 const { Option } = Select
 const Product = () => {
@@ -36,7 +36,7 @@ const Product = () => {
   const fetchData = (val) => {
     val = val === '所有平台' ? '' : val
     setLoading(true)
-    fetchTable(val || '').then((res) => {
+    fetchProduct(val || '').then((res) => {
       setData(res)
       setLoading(false)
     })
