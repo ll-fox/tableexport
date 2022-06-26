@@ -19,7 +19,7 @@ const config = {
     {
       type: 'object',
       required: true,
-      message: 'Please select time!'
+      message: '请选择时间!'
     }
   ]
 }

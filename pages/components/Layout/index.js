@@ -74,7 +74,23 @@ const App = (props = {}) => {
         </Link>
       ),
       key: 'orderForm'
+    },
+    {
+      label: (
+        <Link href="/capital">
+          <a>资金列表</a>
+        </Link>
+      ),
+      key: 'capital'
     }
+    // {
+    //   label: (
+    //     <Link href="/template">
+    //       <a>模版</a>
+    //     </Link>
+    //   ),
+    //   key: 'template'
+    // }
   ]
   return (
     <ConfigProvider locale={zhCN}>
