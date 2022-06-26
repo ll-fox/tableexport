@@ -237,12 +237,9 @@ const ExpressageCapital = () => {
     setIsModalVisible(true)
   }
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
   const handleCancel = () => {
     setIsModalVisible(false)
+    setItemData({})
   }
 
   const onChange = (pagination, filters, sorter, extra) => {
@@ -322,7 +319,6 @@ const ExpressageCapital = () => {
         data={itemData}
         expressageList={expressageList}
         handleCancel={handleCancel}
-        handleOk={handleOk}
       />
     </div>
   )

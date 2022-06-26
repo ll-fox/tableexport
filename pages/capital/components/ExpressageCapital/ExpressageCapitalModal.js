@@ -40,7 +40,7 @@ const getBase64 = (file) =>
 
 const ExpressageCapitalModal = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, handleOk, isModalVisible, data, expressageList } = props
+  const { handleCancel, isModalVisible, data, expressageList } = props
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [previewTitle, setPreviewTitle] = useState('')
@@ -60,7 +60,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('保存成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           }
         })
       } else {
@@ -68,7 +68,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('修改成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           } else {
             message.error('修改失败！')
           }
