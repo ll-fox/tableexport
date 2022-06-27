@@ -46,6 +46,7 @@ const ExpressageCapitalModal = (props) => {
   const [previewTitle, setPreviewTitle] = useState('')
   const [fileList, setFileList] = useState([])
 
+  console.log(3333, data)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -74,6 +75,11 @@ const ExpressageCapitalModal = (props) => {
         })
       }
     })
+  }
+
+  const onCancel = () => {
+    form.resetFields()
+    handleCancel()
   }
 
   const normFile = (e) => {
@@ -141,7 +147,7 @@ const ExpressageCapitalModal = (props) => {
       title="请填写录入信息"
       visible={isModalVisible}
       onOk={onFinish}
-      onCancel={handleCancel}
+      onCancel={onCancel}
       getContainer={false}
       width={'60%'}
       destroyOnClose
