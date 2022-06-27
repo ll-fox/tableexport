@@ -242,6 +242,8 @@ const ExpressageCapital = () => {
       })
   }
 
+  console.log(123, isModalVisible, itemData)
+
   const handleCancel = () => {
     Promise.resolve()
       .then(() => {
