@@ -161,7 +161,7 @@ const ExpressageCapitalModal = (props) => {
         name="time_related_controls"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 12 }}
-        initialValues={newData}
+        initialValues={isEmpty(data) ? {} : newData}
         preserve={false}
         style={{
           height: '450px',
