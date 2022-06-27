@@ -60,6 +60,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('保存成功！')
             form.resetFields()
+            Modal.destroyAll()
             newData = {}
             handleCancel()
           }
@@ -69,6 +70,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('修改成功！')
             form.resetFields()
+            Modal.destroyAll()
             newData = {}
             handleCancel()
           } else {
@@ -82,6 +84,7 @@ const ExpressageCapitalModal = (props) => {
   const onCancel = () => {
     form.resetFields()
     newData = {}
+    Modal.destroyAll()
     handleCancel()
   }
 
@@ -147,193 +150,195 @@ const ExpressageCapitalModal = (props) => {
 
   console.log(4444, newData)
   return (
-    <Modal
-      title="请填写录入信息"
-      visible={isModalVisible}
-      onOk={onFinish}
-      onCancel={onCancel}
-      getContainer={false}
-      width={'60%'}
-      destroyOnClose
-    >
-      <Form
-        form={form}
-        name="time_related_controls"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 12 }}
-        initialValues={newData}
-        preserve={false}
-        style={{
-          height: '450px',
-          overflow: 'auto'
-        }}
-      >
-        <Form.Item name="date" label="日期" {...config}>
-          <DatePicker />
-        </Form.Item>
-        <Form.Item
-          name="projectName"
-          label="项目名称"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入项目名称!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="expressage"
-          label="快递公司"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入快递公司!'
-            }
-          ]}
-        >
-          <Select>
-            {(expressageList || []).map((item) => (
-              <Option key={item.expressage}>{item.expressage}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="name"
-          label="负责人"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入负责人!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="payAcountName"
-          label="付款帐号姓名"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入付款帐号姓名!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="payAcount"
-          label="付款账号"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入付款账号!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="payPrice"
-          label="付款金额"
-          rules={[
-            {
-              type: 'number',
-              required: true,
-              message: '请输入付款金额!'
-            }
-          ]}
-        >
-          <InputNumber min={0} />
-        </Form.Item>
-        <Form.Item
-          name="payee"
-          label="收款人"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收款人!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="payeeName"
-          label="收款账号姓名"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收款账号姓名!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="payeeAcount"
-          label="收款账号"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收款账号!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="remark" label="备注">
-          <TextArea />
-        </Form.Item>
-        <Form.Item
-          name="material"
-          label="交易截图"
-          // valuePropName="fileList"
-          getValueFromEvent={normFile}
-          rules={[
-            {
-              type: 'array',
-              required: true,
-              message: '请上传交易截图!'
-            }
-          ]}
-        >
-          <Upload
-            listType="picture-card"
-            fileList={fileList}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            beforeUpload={beforeUpload}
-          >
-            {fileList.length >= 1 ? null : uploadButton}
-          </Upload>
-        </Form.Item>
-      </Form>
+    isModalVisible && (
       <Modal
-        visible={previewVisible}
-        title={previewTitle}
-        footer={null}
-        onCancel={cancel}
+        title="请填写录入信息"
+        // visible={isModalVisible}
+        onOk={onFinish}
+        onCancel={onCancel}
+        getContainer={false}
+        width={'60%'}
+        destroyOnClose
       >
-        <img
-          alt="example"
+        <Form
+          form={form}
+          name="time_related_controls"
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 12 }}
+          initialValues={newData}
+          preserve={false}
           style={{
-            width: '100%'
+            height: '450px',
+            overflow: 'auto'
           }}
-          src={previewImage}
-        />
+        >
+          <Form.Item name="date" label="日期" {...config}>
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
+            name="projectName"
+            label="项目名称"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入项目名称!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="expressage"
+            label="快递公司"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入快递公司!'
+              }
+            ]}
+          >
+            <Select>
+              {(expressageList || []).map((item) => (
+                <Option key={item.expressage}>{item.expressage}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="负责人"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入负责人!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="payAcountName"
+            label="付款帐号姓名"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入付款帐号姓名!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="payAcount"
+            label="付款账号"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入付款账号!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="payPrice"
+            label="付款金额"
+            rules={[
+              {
+                type: 'number',
+                required: true,
+                message: '请输入付款金额!'
+              }
+            ]}
+          >
+            <InputNumber min={0} />
+          </Form.Item>
+          <Form.Item
+            name="payee"
+            label="收款人"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入收款人!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="payeeName"
+            label="收款账号姓名"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入收款账号姓名!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="payeeAcount"
+            label="收款账号"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入收款账号!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="remark" label="备注">
+            <TextArea />
+          </Form.Item>
+          <Form.Item
+            name="material"
+            label="交易截图"
+            // valuePropName="fileList"
+            getValueFromEvent={normFile}
+            rules={[
+              {
+                type: 'array',
+                required: true,
+                message: '请上传交易截图!'
+              }
+            ]}
+          >
+            <Upload
+              listType="picture-card"
+              fileList={fileList}
+              onPreview={handlePreview}
+              onChange={handleChange}
+              beforeUpload={beforeUpload}
+            >
+              {fileList.length >= 1 ? null : uploadButton}
+            </Upload>
+          </Form.Item>
+        </Form>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={cancel}
+        >
+          <img
+            alt="example"
+            style={{
+              width: '100%'
+            }}
+            src={previewImage}
+          />
+        </Modal>
       </Modal>
-    </Modal>
+    )
   )
 }
 
