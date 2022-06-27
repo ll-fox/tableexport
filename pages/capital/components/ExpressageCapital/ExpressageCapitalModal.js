@@ -153,7 +153,7 @@ const ExpressageCapitalModal = (props) => {
     isModalVisible && (
       <Modal
         title="请填写录入信息"
-        // visible={isModalVisible}
+        visible={isModalVisible}
         onOk={onFinish}
         onCancel={onCancel}
         getContainer={false}
