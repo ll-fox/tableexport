@@ -235,10 +235,10 @@ const ExpressageCapital = () => {
   const showModal = (re) => {
     Promise.resolve()
       .then(() => {
-        setItemData(re)
+        setItemData(() => re)
       })
       .then(() => {
-        setIsModalVisible(true)
+        setIsModalVisible(() => true)
       })
   }
 
