@@ -47,7 +47,7 @@ const ExpressageCapitalModal = (props) => {
   const [fileList, setFileList] = useState([])
 
   console.log(3333, data)
-  const newData = cloneDeep(data)
+  let newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
   }
@@ -60,6 +60,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('保存成功！')
             form.resetFields()
+            newData = {}
             handleCancel()
           }
         })
@@ -68,6 +69,7 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('修改成功！')
             form.resetFields()
+            newData = {}
             handleCancel()
           } else {
             message.error('修改失败！')
@@ -79,6 +81,7 @@ const ExpressageCapitalModal = (props) => {
 
   const onCancel = () => {
     form.resetFields()
+    newData = {}
     handleCancel()
   }
 
@@ -142,6 +145,7 @@ const ExpressageCapitalModal = (props) => {
     </div>
   )
 
+  console.log(4444, newData)
   return (
     <Modal
       title="请填写录入信息"
