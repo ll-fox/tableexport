@@ -233,15 +233,23 @@ const ExpressageCapital = () => {
   ]
 
   const showModal = (re) => {
-    setItemData(re, () => {
-      setIsModalVisible(true)
-    })
+    Promise.resolve()
+      .then(() => {
+        setItemData(re)
+      })
+      .then(() => {
+        setIsModalVisible(true)
+      })
   }
 
   const handleCancel = () => {
-    setIsModalVisible(false, () => {
-      setItemData({})
-    })
+    Promise.resolve()
+      .then(() => {
+        setIsModalVisible(false)
+      })
+      .then(() => {
+        setItemData({})
+      })
   }
 
   const onChange = (pagination, filters, sorter, extra) => {
