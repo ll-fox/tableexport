@@ -59,7 +59,7 @@ const ExpressageCapitalModal = (props) => {
         addCapital(values).then((res) => {
           if (res) {
             message.success('保存成功！')
-            form.setFields([])
+            // form.setFields([])
             newData = {}
             handleCancel()
           }
@@ -68,7 +68,7 @@ const ExpressageCapitalModal = (props) => {
         updateCapital(values, data.objectId).then((res) => {
           if (res) {
             message.success('修改成功！')
-            form.setFields([])
+            // form.setFields([])
             newData = {}
             handleCancel()
           } else {
@@ -80,7 +80,7 @@ const ExpressageCapitalModal = (props) => {
   }
 
   const onCancel = () => {
-    form.setFields([])
+    // form.setFields([])
     newData = {}
     handleCancel()
   }
