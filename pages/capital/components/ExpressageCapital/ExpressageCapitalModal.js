@@ -53,7 +53,6 @@ const ExpressageCapitalModal = (props) => {
   const onFinish = () => {
     form.validateFields().then((values) => {
       values.date = values.date.format('YYYY-MM-DD')
-
       values.material = values.material.map((item) => item.url)
       if (isEmpty(data)) {
         addCapital(values).then((res) => {
