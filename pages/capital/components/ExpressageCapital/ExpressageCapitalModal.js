@@ -59,7 +59,7 @@ const ExpressageCapitalModal = (props) => {
         addCapital(values).then((res) => {
           if (res) {
             message.success('保存成功！')
-            form.resetFields()
+            form.setFields([])
             newData = {}
             handleCancel()
           }
@@ -68,7 +68,7 @@ const ExpressageCapitalModal = (props) => {
         updateCapital(values, data.objectId).then((res) => {
           if (res) {
             message.success('修改成功！')
-            form.resetFields()
+            form.setFields([])
             newData = {}
             handleCancel()
           } else {
@@ -80,7 +80,7 @@ const ExpressageCapitalModal = (props) => {
   }
 
   const onCancel = () => {
-    form.resetFields()
+    form.setFields([])
     newData = {}
     handleCancel()
   }
@@ -161,6 +161,7 @@ const ExpressageCapitalModal = (props) => {
         name="time_related_controls"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 12 }}
+        scrollToFirstError
         initialValues={isEmpty(data) ? {} : newData}
         preserve={false}
         style={{
