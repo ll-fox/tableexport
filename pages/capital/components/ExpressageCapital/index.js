@@ -247,10 +247,10 @@ const ExpressageCapital = () => {
   const handleCancel = () => {
     Promise.resolve()
       .then(() => {
-        setItemData(() => re)
+        setItemData(() => {})
       })
       .then(() => {
-        setIsModalVisible(() => true)
+        setIsModalVisible(() => false)
       })
   }
 
