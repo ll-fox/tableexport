@@ -76,10 +76,10 @@ const ExpressageCapitalModal = (props) => {
     })
   }
 
-  // const onCancel = () => {
-  //   form.resetFields()
-  //   handleCancel()
-  // }
+  const onCancel = () => {
+    form.resetFields()
+    handleCancel()
+  }
 
   const normFile = (e) => {
     if (Array.isArray(e)) {
@@ -148,7 +148,7 @@ const ExpressageCapitalModal = (props) => {
         title="请填写录入信息"
         visible={isModalVisible}
         onOk={onFinish}
-        onCancel={onCancel}
+        onCancel={handleCancel}
         getContainer={false}
         width={'60%'}
         destroyOnClose
