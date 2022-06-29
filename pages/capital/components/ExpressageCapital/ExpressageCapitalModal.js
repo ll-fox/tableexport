@@ -59,7 +59,6 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('保存成功！')
             form.resetFields()
-            Modal.destroyAll()
             handleCancel()
           }
         })
@@ -68,7 +67,6 @@ const ExpressageCapitalModal = (props) => {
           if (res) {
             message.success('修改成功！')
             form.resetFields()
-            Modal.destroyAll()
             handleCancel()
           } else {
             message.error('修改失败！')
@@ -78,11 +76,10 @@ const ExpressageCapitalModal = (props) => {
     })
   }
 
-  const onCancel = () => {
-    form.resetFields()
-    Modal.destroyAll()
-    handleCancel()
-  }
+  // const onCancel = () => {
+  //   form.resetFields()
+  //   handleCancel()
+  // }
 
   const normFile = (e) => {
     if (Array.isArray(e)) {
