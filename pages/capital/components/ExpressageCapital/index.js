@@ -324,12 +324,14 @@ const ExpressageCapital = () => {
         scroll={{ y: 'calc(100vh - 320px)', x: 2200 }}
         onChange={onChange}
       />
-      <ExpressageCapitalModal
-        isModalVisible={isModalVisible}
-        data={itemData}
-        expressageList={expressageList}
-        handleCancel={handleCancel}
-      />
+      {isModalVisible && (
+        <ExpressageCapitalModal
+          isModalVisible={true}
+          data={itemData}
+          expressageList={expressageList}
+          handleCancel={handleCancel}
+        />
+      )}
     </div>
   )
 }
