@@ -284,13 +284,15 @@ const Product = () => {
           }}
           scroll={{ y: 'calc(100vh - 320px)' }}
         />
-        <ProductModal
-          items={items}
-          isModalVisible={isModalVisible}
-          data={itemData}
-          handleCancel={handleCancel}
-          handleOk={handleOk}
-        />
+        {isModalVisible && (
+          <ProductModal
+            items={items}
+            isModalVisible={isModalVisible}
+            data={itemData}
+            handleCancel={handleCancel}
+            handleOk={handleOk}
+          />
+        )}
       </div>
     </App>
   )
