@@ -46,7 +46,6 @@ const ExpressageCapitalModal = (props) => {
   const [previewTitle, setPreviewTitle] = useState('')
   const [fileList, setFileList] = useState([])
 
-  console.log(3333, data)
   let newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -61,7 +60,6 @@ const ExpressageCapitalModal = (props) => {
             message.success('保存成功！')
             form.resetFields()
             Modal.destroyAll()
-            newData = {}
             handleCancel()
           }
         })
@@ -71,7 +69,6 @@ const ExpressageCapitalModal = (props) => {
             message.success('修改成功！')
             form.resetFields()
             Modal.destroyAll()
-            newData = {}
             handleCancel()
           } else {
             message.error('修改失败！')
@@ -83,7 +80,6 @@ const ExpressageCapitalModal = (props) => {
 
   const onCancel = () => {
     form.resetFields()
-    newData = {}
     Modal.destroyAll()
     handleCancel()
   }
