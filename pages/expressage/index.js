@@ -164,10 +164,6 @@ const Expressage = () => {
     setIsModalVisible(true)
   }
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
   const handleCancel = () => {
     setIsModalVisible(false)
   }
@@ -194,13 +190,14 @@ const Expressage = () => {
           }}
           scroll={{ y: 'calc(100vh - 320px)' }}
         />
-        <ExpressageModal
-          items={items}
-          isModalVisible={isModalVisible}
-          data={itemData}
-          handleCancel={handleCancel}
-          handleOk={handleOk}
-        />
+        {isModalVisible && (
+          <ExpressageModal
+            items={items}
+            isModalVisible={true}
+            data={itemData}
+            handleCancel={handleCancel}
+          />
+        )}
       </div>
     </App>
   )

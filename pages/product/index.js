@@ -190,10 +190,6 @@ const Product = () => {
     setIsModalVisible(true)
   }
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
   const handleCancel = () => {
     setIsModalVisible(false)
   }
@@ -287,10 +283,9 @@ const Product = () => {
         {isModalVisible && (
           <ProductModal
             items={items}
-            isModalVisible={isModalVisible}
+            isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
-            handleOk={handleOk}
           />
         )}
       </div>

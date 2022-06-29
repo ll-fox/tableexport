@@ -9,7 +9,7 @@ const { Option } = Select
 const ProductModal = (props) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const { handleCancel, handleOk, isModalVisible, data, items } = props
+  const { handleCancel, isModalVisible, data, items } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -23,7 +23,7 @@ const ProductModal = (props) => {
             setLoading(false)
             message.success('保存成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           } else {
             setLoading(false)
             message.error('保存失败！')
@@ -35,7 +35,7 @@ const ProductModal = (props) => {
             setLoading(false)
             message.success('修改成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           } else {
             setLoading(false)
             message.error('修改失败！')

@@ -216,10 +216,6 @@ const Home = () => {
     setIsModalVisible(true)
   }
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
   const handleCancel = () => {
     setIsModalVisible(false)
   }
@@ -291,12 +287,13 @@ const Home = () => {
           scroll={{ y: 'calc(100vh - 320px)' }}
           onChange={onChange}
         />
-        <TableFrom
-          isModalVisible={isModalVisible}
-          data={itemData}
-          handleCancel={handleCancel}
-          handleOk={handleOk}
-        />
+        {isModalVisible && (
+          <TableFrom
+            isModalVisible={true}
+            data={itemData}
+            handleCancel={handleCancel}
+          />
+        )}
       </div>
     </App>
   )

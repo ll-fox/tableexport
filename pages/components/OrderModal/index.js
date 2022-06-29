@@ -8,7 +8,7 @@ const { Option } = Select
 
 const TableForm = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, handleOk, isModalVisible, data } = props
+  const { handleCancel, isModalVisible, data } = props
   const [loading, setLoading] = useState(false)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
@@ -21,7 +21,7 @@ const TableForm = (props) => {
         if (res) {
           message.success('修改成功！')
           form.resetFields()
-          handleOk()
+          handleCancel()
         } else {
           message.error('修改失败！')
         }

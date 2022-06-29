@@ -41,44 +41,58 @@ const getBase64 = (file) =>
 const ExpressageCapitalModal = (props) => {
   const [form] = Form.useForm()
   const { handleCancel, isModalVisible, data, expressageList } = props
-  const [previewVisible, setPreviewVisible] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
-  const [previewTitle, setPreviewTitle] = useState('')
-  const [fileList, setFileList] = useState([])
 
   let newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
+    newData.material = newData.material.map((item, index) => {
+      return {
+        uid: index,
+        name: 'image.png',
+        status: 'done',
+        url:
+          item ||
+          'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fb7b5b489ab8adb866af91fee3019886c5389ff9d67ab-hH0Mm2_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659110343&t=fa34dd0b42d2ebd9b69b467164e60d9a'
+      }
+    })
   }
+  const [previewVisible, setPreviewVisible] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+  const [previewTitle, setPreviewTitle] = useState('')
+  const [fileList, setFileList] = useState(newData?.material || [])
+  const [loading, setLoading] = useState(false)
+
   const onFinish = () => {
     form.validateFields().then((values) => {
+      setLoading(true)
       values.date = values.date.format('YYYY-MM-DD')
       values.material = values.material.map((item) => item.url)
       if (isEmpty(data)) {
         addCapital(values).then((res) => {
           if (res) {
+            setLoading(false)
             message.success('保存成功！')
             form.resetFields()
             handleCancel()
+          } else {
+            setLoading(false)
+            message.error('保存失败！')
           }
         })
       } else {
         updateCapital(values, data.objectId).then((res) => {
           if (res) {
+            setLoading(false)
             message.success('修改成功！')
             form.resetFields()
             handleCancel()
           } else {
+            setLoading(false)
             message.error('修改失败！')
           }
         })
       }
     })
-  }
-
-  const onCancel = () => {
-    form.resetFields()
-    handleCancel()
   }
 
   const normFile = (e) => {
@@ -141,16 +155,16 @@ const ExpressageCapitalModal = (props) => {
     </div>
   )
 
-  console.log(4444, newData)
   return (
     isModalVisible && (
       <Modal
         title="请填写录入信息"
         visible={isModalVisible}
         onOk={onFinish}
-        onCancel={onCancel}
+        onCancel={handleCancel}
         getContainer={false}
         width={'60%'}
+        confirmLoading={loading}
         destroyOnClose
       >
         <Form

@@ -17,7 +17,7 @@ const config = {
 
 const TableForm = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, handleOk, isModalVisible, data } = props
+  const { handleCancel, isModalVisible, data } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -35,7 +35,7 @@ const TableForm = (props) => {
           if (res) {
             message.success('保存成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           }
         })
       } else {
@@ -43,7 +43,7 @@ const TableForm = (props) => {
           if (res) {
             message.success('修改成功！')
             form.resetFields()
-            handleOk()
+            handleCancel()
           } else {
             message.error('修改失败！')
           }
