@@ -31,7 +31,7 @@ const Capital = () => {
   return (
     <App tab={'capital'}>
       <Tabs onChange={onChange} type="card">
-        <TabPane tab="快递费用" key="1">
+        <TabPane tab="快递单号费用" key="1">
           <ExpressageCapital />
         </TabPane>
         <TabPane tab="产品收购费用" key="4">

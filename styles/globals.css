@@ -14,3 +14,13 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td,
+.ant-table tfoot > tr > th,
+.ant-table tfoot > tr > td {
+  padding: 0px 5px !important; /* 将上下padding值0 */
+  /* font-family: PingFangSC-Medium; */
+  font-size: 12px;
+  line-height: 40px; /* 将行高加到line-height值 */
+}

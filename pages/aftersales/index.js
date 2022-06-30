@@ -139,7 +139,7 @@ const Home = () => {
       title: '售后反馈日期',
       dataIndex: 'date',
       key: 'date',
-      width: 140,
+      width: 110,
       fixed: 'left',
       ...getColumnSearchProps('date')
     },
@@ -154,6 +154,13 @@ const Home = () => {
       dataIndex: 'expressage',
       width: 100,
       key: 'expressage'
+    },
+    {
+      title: '平台订单号',
+      dataIndex: 'platformOrderNumber',
+      key: 'platformOrderNumber',
+      width: 180,
+      ...getColumnSearchProps('platformOrderNumber')
     },
     {
       title: '快递单号',
@@ -261,6 +268,7 @@ const Home = () => {
       'date',
       'platform',
       'expressage',
+      'platformOrderNumber',
       'odd',
       'username',
       'phone',
@@ -281,6 +289,7 @@ const Home = () => {
           '售后反馈日期',
           '平台名称',
           '快递公司',
+          '平台订单号',
           '快递单号',
           '收件人',
           '电话',
@@ -290,7 +299,7 @@ const Home = () => {
           '处理结果',
           '售后金额'
         ],
-        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]
+        columnWidths: [5, 5, 5, 5, 5, 5, 5, 5, 10]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new

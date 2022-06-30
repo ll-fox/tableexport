@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Form,
   DatePicker,
@@ -10,6 +10,8 @@ import {
 } from 'antd'
 import 'moment/locale/zh-cn'
 import { addItem, updateItem, judgeContains } from '../../api/aftersales'
+import { fetchPlatform } from '../../api/product'
+import { fetchExpressage } from '../../api/expressage'
 import moment from 'moment'
 import { cloneDeep, isEmpty } from 'lodash'
 const { Option } = Select
@@ -27,34 +29,55 @@ const config = {
 const TableForm = (props) => {
   const [form] = Form.useForm()
   const { handleCancel, isModalVisible, data } = props
+  const [items, setItems] = useState([])
+  const [expressages, setExpressages] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetchPlatform().then((res) => {
+      setItems(res)
+    })
+    fetchExpressage().then((res) => {
+      setExpressages(res)
+    })
+  }, [])
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
   }
   const onFinish = () => {
     form.validateFields().then((values) => {
+      setLoading(true)
       values.date = values.date.format('YYYY-MM-DD')
       if (isEmpty(data)) {
         judgeContains(values.odd).then((res) => {
           if (isEmpty(res)) {
             addItem(values).then((res) => {
               if (res) {
+                setLoading(false)
                 message.success('保存成功！')
                 form.resetFields()
                 handleCancel()
+              } else {
+                setLoading(false)
+                message.success('保存失败！')
+                form.resetFields()
               }
             })
           } else {
+            setLoading(false)
             message.error('该订单已经存在于订单里！')
           }
         })
       } else {
         updateItem(values, data.objectId).then((res) => {
           if (res) {
+            setLoading(false)
             message.success('修改成功！')
             form.resetFields()
             handleCancel()
           } else {
+            setLoading(false)
             message.error('修改失败！')
           }
         })
@@ -75,8 +98,8 @@ const TableForm = (props) => {
       <Form
         form={form}
         name="time_related_controls"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 14 }}
         initialValues={newData}
         preserve={false}
         style={{
@@ -94,11 +117,15 @@ const TableForm = (props) => {
             {
               type: 'string',
               required: true,
-              message: '请输入平台名称!'
+              message: '请选择平台!'
             }
           ]}
         >
-          <Input />
+          <Select>
+            {(items || []).map((item) => (
+              <Option key={item.name}>{item.name}</Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="expressage"
@@ -111,6 +138,13 @@ const TableForm = (props) => {
             }
           ]}
         >
+          <Select>
+            {(expressages || []).map((item) => (
+              <Option key={item.expressage}>{item.expressage}</Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item name="platformOrderNumber" label="平台订单号">
           <Input />
         </Form.Item>
         <Form.Item
@@ -126,43 +160,13 @@ const TableForm = (props) => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="username"
-          label="收件人"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收件人!'
-            }
-          ]}
-        >
+        <Form.Item name="username" label="收件人">
           <Input />
         </Form.Item>
-        <Form.Item
-          name="phone"
-          label="电话"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收件人电话!'
-            }
-          ]}
-        >
+        <Form.Item name="phone" label="电话">
           <Input />
         </Form.Item>
-        <Form.Item
-          name="address"
-          label="地址"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入收件人地址!'
-            }
-          ]}
-        >
+        <Form.Item name="address" label="地址">
           <Input />
         </Form.Item>
         <Form.Item

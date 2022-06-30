@@ -78,7 +78,7 @@ const App = (props = {}) => {
     {
       label: (
         <Link href="/capital">
-          <a>资金列表</a>
+          <a>财务支出</a>
         </Link>
       ),
       key: 'capital'
