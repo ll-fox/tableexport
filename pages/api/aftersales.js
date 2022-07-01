@@ -32,6 +32,7 @@ const updateItem = async (val, id) => {
 const fetchTable = async () => {
   const QA = new AV.Query('Aftersales')
   try {
+    QA.limit(1000)
     const data = await QA.find()
     const records = data.reverse().map((x) => {
       const json = x.toJSON()
