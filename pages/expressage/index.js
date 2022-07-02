@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Select, Typography, Divider } from 'antd'
+import { Table, Input, Button, Space, Select, List, Avatar } from 'antd'
 import App from '../components/Layout/index'
 import { SearchOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
@@ -139,23 +139,47 @@ const Expressage = () => {
       title: '快递公司',
       dataIndex: 'expressage',
       key: 'expressage',
+      width: '10%',
       ...getColumnSearchProps('expressage')
     },
     {
       title: '加价区域',
       dataIndex: 'raisePriceArea',
       key: 'raisePriceArea',
-      render: (val) => val.join(', ')
-    },
-    {
-      title: '加价金额',
-      dataIndex: 'raisePrice',
-      key: 'raisePrice'
+      width: '75%',
+      render: (val) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={val}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Avatar src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.yzt-tools.com%2F20190313%2Fff7faa5d6ed43302a2542c2ba4814160.jpg%3Fx-oss-process%3Dimage%2Fresize%2Cw_600%2Fauto-orient%2C1%2Fquality%2Cq_90%2Fformat%2Cjpg&refer=http%3A%2F%2Fimg.yzt-tools.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659373360&t=0512c5164833a470cc622b7d0c975adf" />
+                }
+                title={
+                  <p style={{ fontSize: '9px', margin: '0' }}>
+                    加价 <span style={{ color: 'red' }}>{item.price}</span>{' '}
+                    元区域
+                  </p>
+                }
+                description={(item.area || []).join(',')}
+              />
+            </List.Item>
+          )}
+        />
+      )
     },
     {
       title: '操作',
       dataIndex: '',
       key: 'x',
+      width: '15%',
       render: (val, re) => <a onClick={() => showModal(re)}>修改</a>
     }
   ]
@@ -182,6 +206,7 @@ const Expressage = () => {
           loading={loading}
           columns={columns}
           dataSource={data}
+          bordered
           pagination={{
             total: (data || []).length,
             showSizeChanger: true,
