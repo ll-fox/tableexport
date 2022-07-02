@@ -186,6 +186,7 @@ const ExpressageModal = (props) => {
                     (item) => isUndefined(item.area) || isUndefined(item.price)
                   )
                   index >= 0 && callback('请填写完整的区域与价格！')
+                  callback()
                 } else if (value === '') {
                   callback('请填写完整的区域与价格！')
                 } else {
