@@ -11,12 +11,11 @@ import {
   MinusCircleOutlined
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { isUndefined } from 'lodash'
 
 import 'moment/locale/zh-cn'
 import { updateExpressage, addExpressage } from '../../api/expressage'
 import moment from 'moment'
-import { cloneDeep, isEmpty, isArray } from 'lodash'
+import { cloneDeep, isEmpty, isArray, isUndefined } from 'lodash'
 import { PROVINCES } from '../../../public/static/constant'
 
 const { Option } = Select
@@ -82,7 +81,7 @@ const ExpressageModal = (props) => {
     setList([...list])
   }
 
-  const addrenderArea = () => {
+  const addRenderArea = () => {
     setList([...list, {}])
   }
 
@@ -94,7 +93,7 @@ const ExpressageModal = (props) => {
     return (
       <div>
         {list && list.map((item, index) => renderAreaItem(item, index))}
-        <Button type="primary" onClick={addrenderArea}>
+        <Button type="primary" onClick={addRenderArea}>
           添加区域
         </Button>
       </div>

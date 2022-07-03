@@ -1,5 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Select, Typography, Divider } from 'antd'
+import {
+  Table,
+  Input,
+  Button,
+  Space,
+  Select,
+  Typography,
+  Divider,
+  List,
+  Avatar
+} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import App from '../components/Layout/index'
 import { SearchOutlined } from '@ant-design/icons'
@@ -166,11 +176,33 @@ const Product = () => {
       title: '供应价格',
       dataIndex: 'price',
       key: 'price',
-      sorter: {
-        compare: (a, b) => a.price - b.price
-        // multiple: 3
-      },
-      sortDirections: ['descend', 'ascend']
+      width: 400,
+      render: (val) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={val}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Avatar src="https://img1.baidu.com/it/u=4280931182,3240552444&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" />
+                }
+                title={
+                  <p style={{ fontSize: '9px', margin: '0' }}>
+                    价格： <span style={{ color: 'red' }}>{item.price}</span> 元
+                  </p>
+                }
+                description={`时间：${(item.date || []).join(' - ')}`}
+              />
+            </List.Item>
+          )}
+        />
+      )
     },
     {
       title: '审核人',
@@ -272,6 +304,7 @@ const Product = () => {
           loading={loading}
           columns={columns}
           dataSource={data}
+          bordered
           pagination={{
             total: (data || []).length,
             showSizeChanger: true,

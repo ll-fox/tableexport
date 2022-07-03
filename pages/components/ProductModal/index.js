@@ -1,21 +1,46 @@
-import React, { useState } from 'react'
-import { Form, Input, Modal, InputNumber, message, Select } from 'antd'
+import React, { useState, useEffect } from 'react'
+import {
+  Form,
+  Input,
+  Modal,
+  InputNumber,
+  message,
+  Select,
+  Button,
+  DatePicker
+} from 'antd'
 import 'moment/locale/zh-cn'
 import { updateProduct, addProduct } from '../../api/product'
 import moment from 'moment'
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty, isArray, isUndefined } from 'lodash'
 const { Option } = Select
+const { RangePicker } = DatePicker
 
 const ProductModal = (props) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const [list, setList] = useState([])
   const { handleCancel, isModalVisible, data, items } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
   }
+
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      setList(data?.price)
+    }
+  }, [data])
+
+  useEffect(() => {
+    form.setFieldsValue({
+      price: list
+    })
+  }, [form, list])
+
   const onFinish = () => {
     form.validateFields().then((values) => {
+      console.log(333, values)
       setLoading(true)
       if (isEmpty(data)) {
         addProduct(values).then((res) => {
@@ -45,6 +70,70 @@ const ProductModal = (props) => {
     })
   }
 
+  const setIntervalData = (value, type, index) => {
+    list[index][type] = value
+    form.setFieldsValue({
+      price: [...list]
+    })
+    setList([...list])
+  }
+
+  const addRenderInterval = () => {
+    setList([...list, {}])
+  }
+
+  const deleteInterval = (index) => {
+    list.splice(index, 1)
+    setList([...list])
+  }
+  const renderInterval = () => {
+    return (
+      <div>
+        {list && list.map((item, index) => renderIntervalItem(item, index))}
+        <Button type="primary" onClick={addRenderInterval}>
+          +添加区间价格
+        </Button>
+      </div>
+    )
+  }
+
+  const renderIntervalItem = (item, index) => {
+    return (
+      <div style={{ display: 'flex', marginBottom: '2px' }}>
+        <RangePicker
+          format="YYYYMMDD"
+          defaultValue={[
+            moment(item.date[0], 'YYYYMMDD'),
+            moment(item.date[1], 'YYYYMMDD')
+          ]}
+          style={{
+            marginRight: '2px'
+          }}
+          onChange={(val, dateString) =>
+            setIntervalData(dateString, 'date', index)
+          }
+        />
+        <InputNumber
+          value={item.price}
+          onChange={(val) => setIntervalData(val, 'price', index)}
+          min={0}
+          // addonBefore="加价"
+          addonAfter="元"
+          style={{ width: 120 }}
+        />
+        <Button
+          danger
+          type="text"
+          onClick={() => {
+            deleteInterval(index)
+          }}
+        >
+          删除
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <Modal
       title="商品信息"
@@ -60,7 +149,7 @@ const ProductModal = (props) => {
         form={form}
         name="time_related_controls"
         labelCol={{ span: 6 }}
-        wrapperCol={{ span: 12 }}
+        wrapperCol={{ span: 16 }}
         initialValues={newData}
         preserve={false}
         style={{
@@ -77,7 +166,7 @@ const ProductModal = (props) => {
             }
           ]}
         >
-          <Select>
+          <Select style={{ width: 250 }}>
             {(items || []).map((item) => (
               <Option key={item.name}>{item.name}</Option>
             ))}
@@ -93,7 +182,7 @@ const ProductModal = (props) => {
             }
           ]}
         >
-          <Input />
+          <Input style={{ width: 250 }} />
         </Form.Item>
         <Form.Item
           name="spece"
@@ -105,19 +194,36 @@ const ProductModal = (props) => {
             }
           ]}
         >
-          <Input />
+          <Input style={{ width: 250 }} />
         </Form.Item>
         <Form.Item
           name="price"
-          label="供应价格"
+          label="价格"
           rules={[
             {
               required: true,
-              message: '请输入供应价格!'
+              type: 'array',
+              validator: (rule, value, callback) => {
+                if (isArray(value)) {
+                  const index = (value || []).findIndex(
+                    (item) => isUndefined(item.date) || isUndefined(item.price)
+                  )
+                  index >= 0 && callback('请填写完整的区间价格！')
+                  callback()
+                } else if (value === '') {
+                  callback('请填写完整的区间价格！')
+                } else {
+                  form.setFieldsValue({
+                    price: list
+                  })
+                  callback()
+                }
+              }
+              // message: '请选择加价区域!'
             }
           ]}
         >
-          <InputNumber min={1} addonAfter="元" />
+          {renderInterval()}
         </Form.Item>
         <Form.Item
           name="auditor"
@@ -129,7 +235,7 @@ const ProductModal = (props) => {
             }
           ]}
         >
-          <Select>
+          <Select style={{ width: 250 }}>
             {['杨一凡', '米佳乐', '石喆'].map((name) => (
               <Option key={name}>{name}</Option>
             ))}

@@ -29,7 +29,7 @@ const TableForm = (props) => {
         (values.rePriceDate = values.rePriceDate
           ? values.rePriceDate.format('YYYY-MM-DD')
           : '')
-      values.price = values.num * values.unitPrice
+      values.price = (values.num * values.unitPrice * 100) / 100
       if (isEmpty(data)) {
         addItem(values).then((res) => {
           if (res) {
