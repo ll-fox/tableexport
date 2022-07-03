@@ -102,10 +102,14 @@ const ProductModal = (props) => {
       <div style={{ display: 'flex', marginBottom: '2px' }}>
         <RangePicker
           format="YYYYMMDD"
-          value={[
-            moment(item.date[0], 'YYYYMMDD'),
-            moment(item.date[1], 'YYYYMMDD')
-          ]}
+          value={
+            !isEmpty(item)
+              ? [
+                  moment(item.date[0], 'YYYYMMDD'),
+                  moment(item.date[1], 'YYYYMMDD')
+                ]
+              : []
+          }
           style={{
             marginRight: '2px'
           }}
