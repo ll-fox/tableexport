@@ -144,12 +144,13 @@ const Home = () => {
       dataIndex: Object.values(TABLE_HEADER)[0],
       key: Object.values(TABLE_HEADER)[0],
       fixed: 'left',
-      ...getColumnSearchProps(Object.values(TABLE_HEADER)[0])
     },
     {
       title: Object.keys(TABLE_HEADER)[1],
       dataIndex: Object.values(TABLE_HEADER)[1],
-      key: Object.values(TABLE_HEADER)[1]
+      key: Object.values(TABLE_HEADER)[1],
+      ...getColumnSearchProps(Object.values(TABLE_HEADER)[1])
+
     },
     {
       title: Object.keys(TABLE_HEADER)[2],
@@ -235,16 +236,6 @@ const Home = () => {
       key: Object.values(TABLE_HEADER)[17]
     },
     {
-      title: Object.keys(TABLE_HEADER)[18],
-      dataIndex: Object.values(TABLE_HEADER)[18],
-      key: Object.values(TABLE_HEADER)[18]
-    },
-    {
-      title: Object.keys(TABLE_HEADER)[19],
-      dataIndex: Object.values(TABLE_HEADER)[19],
-      key: Object.values(TABLE_HEADER)[19]
-    },
-    {
       title: '操作',
       dataIndex: '',
       key: 'x',
@@ -280,10 +271,7 @@ const Home = () => {
         sheetName: '订单详情',
         sheetFilter: sheetFilter,
         sheetHeader: Object.keys(TABLE_HEADER),
-        columnWidths: [
-          5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5,
-          10, 5, 5, 5, 5, 5, 5, 5, 10
-        ]
+        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 10, 5]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new

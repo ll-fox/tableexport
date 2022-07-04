@@ -3,6 +3,7 @@ import moment from 'moment'
 import { find } from 'loadsh'
 import { fetchProduct } from './product'
 import { fetchExpressage } from './expressage'
+import { message } from 'antd'
 const AV = require('leancloud-storage')
 
 const pushItem = async (val) => {
@@ -12,33 +13,54 @@ const pushItem = async (val) => {
   const objects = (val || []).map((item, index) => {
     const abject = {}
     const ORDER = new AV.Object('ORDER')
+    let unitPrice = 0 //单价
+    let expressagePrice = 0 //快递加价费用
     Object.keys(item).forEach((element) => {
       if (item[element]) {
         abject[TABLE_HEADER[element]] = item[element]
       }
-      //单价
-      const price =
-        Number(
-          find(Product, {
-            platform: item['对接平台名称'],
-            spece: item['规格名称']
-          })?.price
-        ) || 0
-      const expressageInfo = find(Expressage, {
-        expressage: item['快递公司']
+      const platformItem = find(Product, {
+        platform: item['对接平台名称'],
+        spece: item['规格名称']
       })
-      const raisePrice = Number(expressageInfo.raisePrice) || 0
-      //快递是否加价
-      let isRaisePrice = false
-      expressageInfo.raisePriceArea.forEach((item) => {
-        if (item['收件人地址'].indexOf(item) >= 0) {
-          isRaisePrice = true
+      if (platformItem) {
+        console.log(1111, platformItem)
+        const price = platformItem.price
+        const expressageInfo = find(Expressage, {
+          expressage: item['快递公司']
+        })
+        price.forEach((element) => {
+          if (
+            moment(item['日期']).diff(moment(element.date[0]), 'days') >= 0 &&
+            moment(element.date[1]).diff(moment(item['日期']), 'days') >= 0
+          ) {
+            unitPrice = element.price
+          }
+        })
+        if (expressageInfo) {
+          console.log(2222, expressageInfo)
+          expressageInfo.raisePriceArea.forEach((element) => {
+            element.area.forEach((area) => {
+              if (item['收件人地址'].includes(area)) {
+                expressagePrice = element.price
+              }
+            })
+          })
+        } else {
+          message.error(
+            '匹配快递名称失败，请在快递列表中检查是否存在表格中的所有快递！'
+          )
+          return
         }
-      })
+      } else {
+        message.error(
+          '匹配平台名称或规格名称失败，请在商品列表中检查是否存在表格中的所有平台规格！'
+        )
+        return
+      }
       //总金额
       abject.amount =
-        price * Number(item['数量']) +
-        (isRaisePrice ? Number(raisePrice) : 0) -
+        (unitPrice + expressagePrice) * Number(item['数量']) -
         Number(item['售后金额'])
       abject.JWNYPurchaseOrder = `JWNY${moment().format('yyyyMMDD')}${
         count + index

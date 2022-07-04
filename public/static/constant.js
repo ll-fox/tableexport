@@ -1,12 +1,9 @@
 const TABLE_HEADER = {
-  金翁农业订单号: 'JWNYPurchaseOrder',
   日期: 'date',
+  金翁农业订单号: 'JWNYPurchaseOrder',
+  项目名称: 'projectName',
   对接平台名称: 'dockingPlatform',
-  发货仓库: 'shippingWhse',
-  平台订单号1: 'orderNumber1',
-  平台订单号2: 'orderNumber2',
-  平台订单号3: 'orderNumber3',
-  平台订单号4: 'orderNumber4',
+  平台订单号: 'orderNumber',
   快递公司: 'expressCompany',
   物流单号: 'trackingNumber',
   收件人姓名: 'receiver',
@@ -15,10 +12,11 @@ const TABLE_HEADER = {
   发件人姓名: 'shipper',
   发件人电话: 'shipperTel',
   规格名称: 'spece',
-  数量: 'quantity',
-  是否售后: 'afterMarketService',
-  售后金额: 'afterMarketServiceAmount',
-  总金额: 'amount'
+  数量: 'num',
+  是否售后: 'isAfter',
+  售后金额: 'afterAmount',
+  售后原因: 'afterReason',
+  结算金额: 'amount'
 }
 const PROVINCES = [
   '北京',
