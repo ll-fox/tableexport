@@ -24,21 +24,25 @@ const pushItem = async (val) => {
         spece: item['规格名称']
       })
       if (platformItem) {
-        console.log(1111, platformItem)
         const price = platformItem.price
         const expressageInfo = find(Expressage, {
           expressage: item['快递公司']
         })
         price.forEach((element) => {
           if (
-            moment(item['日期']).diff(moment(element.date[0]), 'days') >= 0 &&
-            moment(element.date[1]).diff(moment(item['日期']), 'days') >= 0
+            moment(String(item['日期'])).diff(
+              moment(element.date[0]),
+              'days'
+            ) >= 0 &&
+            moment(element.date[1]).diff(
+              moment(String(item['日期'])),
+              'days'
+            ) >= 0
           ) {
             unitPrice = element.price
           }
         })
         if (expressageInfo) {
-          console.log(2222, expressageInfo)
           expressageInfo.raisePriceArea.forEach((element) => {
             element.area.forEach((area) => {
               if (item['收件人地址'].includes(area)) {
@@ -58,10 +62,11 @@ const pushItem = async (val) => {
         )
         return
       }
+      const afterPrice = item['售后金额'] ? item['售后金额'] : 0
       //总金额
       abject.amount =
         (unitPrice + expressagePrice) * Number(item['数量']) -
-        Number(item['售后金额'])
+        Number(afterPrice)
       abject.JWNYPurchaseOrder = `JWNY${moment().format('yyyyMMDD')}${
         count + index
       }`
@@ -85,6 +90,7 @@ const updateItem = async (val, id) => {
 const fetchTable = async (val) => {
   const ORDER = new AV.Query('ORDER')
   try {
+    ORDER.limit(1000)
     ORDER.equalTo('date', Number(val))
     const data = await ORDER.find()
     const records = data.reverse().map((x) => {

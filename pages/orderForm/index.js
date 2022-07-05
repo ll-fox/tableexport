@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Upload, DatePicker } from 'antd'
+import { Table, Input, Button, Space, Upload, DatePicker, Tooltip } from 'antd'
 import moment from 'moment'
 import { UploadOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
@@ -144,95 +144,123 @@ const Home = () => {
       dataIndex: Object.values(TABLE_HEADER)[0],
       key: Object.values(TABLE_HEADER)[0],
       fixed: 'left',
+      width: 100
     },
     {
       title: Object.keys(TABLE_HEADER)[1],
       dataIndex: Object.values(TABLE_HEADER)[1],
       key: Object.values(TABLE_HEADER)[1],
+      width: 150,
       ...getColumnSearchProps(Object.values(TABLE_HEADER)[1])
-
     },
     {
       title: Object.keys(TABLE_HEADER)[2],
       dataIndex: Object.values(TABLE_HEADER)[2],
+      width: 150,
       key: Object.values(TABLE_HEADER)[2]
     },
     {
       title: Object.keys(TABLE_HEADER)[3],
       dataIndex: Object.values(TABLE_HEADER)[3],
       key: Object.values(TABLE_HEADER)[3],
+      width: 150,
       ...getColumnSearchProps(Object.values(TABLE_HEADER)[3])
     },
     {
       title: Object.keys(TABLE_HEADER)[4],
       dataIndex: Object.values(TABLE_HEADER)[4],
       key: Object.values(TABLE_HEADER)[4],
+      width: 250,
       ...getColumnSearchProps(Object.values(TABLE_HEADER)[4])
     },
     {
       title: Object.keys(TABLE_HEADER)[5],
       dataIndex: Object.values(TABLE_HEADER)[5],
+      width: 150,
       key: Object.values(TABLE_HEADER)[5]
     },
     {
       title: Object.keys(TABLE_HEADER)[6],
       dataIndex: Object.values(TABLE_HEADER)[6],
+      width: 200,
       key: Object.values(TABLE_HEADER)[6]
     },
     {
       title: Object.keys(TABLE_HEADER)[7],
       dataIndex: Object.values(TABLE_HEADER)[7],
-      key: Object.values(TABLE_HEADER)[7]
+      key: Object.values(TABLE_HEADER)[7],
+      width: 150
     },
     {
       title: Object.keys(TABLE_HEADER)[8],
       dataIndex: Object.values(TABLE_HEADER)[8],
-      key: Object.values(TABLE_HEADER)[8]
+      key: Object.values(TABLE_HEADER)[8],
+      width: 150
     },
     {
       title: Object.keys(TABLE_HEADER)[9],
       dataIndex: Object.values(TABLE_HEADER)[9],
       key: Object.values(TABLE_HEADER)[9],
-      ...getColumnSearchProps(Object.values(TABLE_HEADER)[9])
+      width: 200,
+      ellipsis: true,
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: Object.keys(TABLE_HEADER)[10],
       dataIndex: Object.values(TABLE_HEADER)[10],
+      width: 150,
       key: Object.values(TABLE_HEADER)[10]
     },
     {
       title: Object.keys(TABLE_HEADER)[11],
       dataIndex: Object.values(TABLE_HEADER)[11],
+      width: 150,
       key: Object.values(TABLE_HEADER)[11]
     },
     {
       title: Object.keys(TABLE_HEADER)[12],
       dataIndex: Object.values(TABLE_HEADER)[12],
+      width: 200,
       key: Object.values(TABLE_HEADER)[12]
     },
     {
       title: Object.keys(TABLE_HEADER)[13],
       dataIndex: Object.values(TABLE_HEADER)[13],
+      width: 100,
       key: Object.values(TABLE_HEADER)[13]
     },
     {
       title: Object.keys(TABLE_HEADER)[14],
       dataIndex: Object.values(TABLE_HEADER)[14],
+      width: 150,
       key: Object.values(TABLE_HEADER)[14]
     },
     {
       title: Object.keys(TABLE_HEADER)[15],
       dataIndex: Object.values(TABLE_HEADER)[15],
+      width: 150,
       key: Object.values(TABLE_HEADER)[15]
     },
     {
       title: Object.keys(TABLE_HEADER)[16],
       dataIndex: Object.values(TABLE_HEADER)[16],
-      key: Object.values(TABLE_HEADER)[16]
+      width: 150,
+      key: Object.values(TABLE_HEADER)[16],
+      ellipsis: true,
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
     },
     {
       title: Object.keys(TABLE_HEADER)[17],
       dataIndex: Object.values(TABLE_HEADER)[17],
+      width: 150,
       key: Object.values(TABLE_HEADER)[17]
     },
     {
@@ -240,6 +268,7 @@ const Home = () => {
       dataIndex: '',
       key: 'x',
       fixed: 'right',
+      width: 100,
       render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
     }
   ]
@@ -271,7 +300,9 @@ const Home = () => {
         sheetName: '订单详情',
         sheetFilter: sheetFilter,
         sheetHeader: Object.keys(TABLE_HEADER),
-        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 10, 5]
+        columnWidths: [
+          5, 5, 15, 5, 10, 10, 10, 10, 5, 15, 5, 5, 5, 5, 5, 5, 10, 5
+        ]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new
@@ -361,7 +392,7 @@ const Home = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 300px)', x: 4200 }}
+          scroll={{ y: 'calc(100vh - 300px)', x: 3200 }}
           onChange={onChange}
         />
         {isModalVisible && (
