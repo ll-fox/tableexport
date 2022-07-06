@@ -94,6 +94,7 @@ const TableForm = (props) => {
       getContainer={false}
       width={'60%'}
       destroyOnClose
+      confirmLoading={loading}
     >
       <Form
         form={form}

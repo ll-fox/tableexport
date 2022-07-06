@@ -40,7 +40,6 @@ const ProductModal = (props) => {
 
   const onFinish = () => {
     form.validateFields().then((values) => {
-      console.log(333, values)
       setLoading(true)
       if (isEmpty(data)) {
         addProduct(values).then((res) => {

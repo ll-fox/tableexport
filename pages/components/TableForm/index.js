@@ -18,6 +18,7 @@ const config = {
 const TableForm = (props) => {
   const [form] = Form.useForm()
   const { handleCancel, isModalVisible, data } = props
+  const [loading, setLoading] = useState(false)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -25,6 +26,7 @@ const TableForm = (props) => {
   }
   const onFinish = () => {
     form.validateFields().then((values) => {
+      setLoading(true)
       ;(values.date = values.date.format('YYYY-MM-DD')),
         (values.rePriceDate = values.rePriceDate
           ? values.rePriceDate.format('YYYY-MM-DD')
@@ -33,18 +35,24 @@ const TableForm = (props) => {
       if (isEmpty(data)) {
         addItem(values).then((res) => {
           if (res) {
+            setLoading(false)
             message.success('保存成功！')
             form.resetFields()
             handleCancel()
+          } else {
+            setLoading(false)
+            message.error('修改失败！')
           }
         })
       } else {
         updateItem(values, data.objectId).then((res) => {
           if (res) {
+            setLoading(false)
             message.success('修改成功！')
             form.resetFields()
             handleCancel()
           } else {
+            setLoading(false)
             message.error('修改失败！')
           }
         })
@@ -61,6 +69,7 @@ const TableForm = (props) => {
       getContainer={false}
       width={'60%'}
       destroyOnClose
+      confirmLoading={loading}
     >
       <Form
         form={form}
@@ -146,7 +155,7 @@ const TableForm = (props) => {
           <DatePicker />
         </Form.Item>
         <Form.Item name="rePrice" label="付款金额">
-          <InputNumber min={1} />
+          <InputNumber min={0} />
         </Form.Item>
         <Form.Item name="remark" label="备注">
           <TextArea />
