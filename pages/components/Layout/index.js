@@ -30,8 +30,30 @@ const App = (props = {}) => {
   )
   const menu = [
     {
+      label: '进库详情',
+      key: 'enterBank',
+      children: [
+        {
+          label: (
+            <Link href="/">
+              <a>进库详情</a>
+            </Link>
+          ),
+          key: 'home'
+        },
+        {
+          label: (
+            <Link href="/enterBank/materialStorage">
+              <a>原料进库</a>
+            </Link>
+          ),
+          key: 'materialStorage'
+        }
+      ]
+    },
+    {
       label: '商品管理',
-      key: 'subMenu',
+      key: 'productManagement',
       children: [
         {
           label: (
@@ -50,14 +72,6 @@ const App = (props = {}) => {
           key: 'expressage'
         }
       ]
-    },
-    {
-      label: (
-        <Link href="/">
-          <a>进库详情</a>
-        </Link>
-      ),
-      key: 'home'
     },
     {
       label: (

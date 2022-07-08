@@ -189,7 +189,7 @@ const TableForm = (props) => {
           rules={[
             {
               required: true,
-              message: '请输入单价!'
+              message: '请选择!'
             }
           ]}
         >
