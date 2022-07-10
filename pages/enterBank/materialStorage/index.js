@@ -172,7 +172,11 @@ const MaterialStorage = () => {
       key: 'date',
       width: 130,
       fixed: 'left',
-      ...getColumnSearchProps('date')
+      sorter: {
+        compare: (a, b) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        // multiple: 3
+      }
     },
     {
       title: '产地',
