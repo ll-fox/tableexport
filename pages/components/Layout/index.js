@@ -33,14 +33,14 @@ const App = (props = {}) => {
       label: '进库详情',
       key: 'enterBank',
       children: [
-        {
-          label: (
-            <Link href="/">
-              <a>进库详情</a>
-            </Link>
-          ),
-          key: 'home'
-        },
+        // {
+        //   label: (
+        //     <Link href="/">
+        //       <a>进库详情</a>
+        //     </Link>
+        //   ),
+        //   key: 'home'
+        // },
         {
           label: (
             <Link href="/enterBank/materialStorage">
