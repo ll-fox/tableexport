@@ -159,12 +159,20 @@ const Product = () => {
     {
       title: '平台名称',
       dataIndex: 'platform',
-      key: 'platform'
+      key: 'platform',
+      sorter: {
+        compare: (a, b) => a.platform.localeCompare(b.platform)
+        // multiple: 3
+      }
     },
     {
       title: '项目名称',
       dataIndex: 'produceName',
       key: 'produceName',
+      sorter: {
+        compare: (a, b) => a.platform.localeCompare(b.platform)
+        // multiple: 3
+      },
       ...getColumnSearchProps('produceName')
     },
     {
