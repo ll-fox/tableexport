@@ -207,7 +207,9 @@ const ProductModal = (props) => {
               required: true,
               type: 'array',
               validator: (rule, value, callback) => {
-                if (isArray(value)) {
+                if (isEmpty(value)) {
+                  callback('请填写完整的区间价格！')
+                } else if (isArray(value)) {
                   const index = (value || []).findIndex(
                     (item) => isUndefined(item.date) || isUndefined(item.price)
                   )

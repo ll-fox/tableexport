@@ -267,7 +267,7 @@ const MaterialStorageModal = (props) => {
           </Form.Item>
           <Form.Item
             name="pay"
-            label="是否已处理"
+            label="是否付款"
             rules={[
               {
                 required: true,

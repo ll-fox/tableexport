@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Form,
-  Input,
-  Modal,
-  InputNumber,
-  message,
-  Select,
-  Button,
-  Space,
-  MinusCircleOutlined
-} from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-
+import { Form, Input, Modal, InputNumber, message, Select, Button } from 'antd'
 import 'moment/locale/zh-cn'
 import { updateExpressage, addExpressage } from '../../api/expressage'
 import moment from 'moment'
@@ -180,7 +168,9 @@ const ExpressageModal = (props) => {
               required: true,
               type: 'array',
               validator: (rule, value, callback) => {
-                if (isArray(value)) {
+                if (isEmpty(value)) {
+                  callback('请填写完整的区域与价格！')
+                } else if (isArray(value)) {
                   const index = (value || []).findIndex(
                     (item) => isUndefined(item.area) || isUndefined(item.price)
                   )

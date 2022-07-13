@@ -1,12 +1,33 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Tooltip, Form, DatePicker } from 'antd'
+import {
+  Table,
+  Input,
+  Button,
+  Space,
+  Tooltip,
+  List,
+  Tag,
+  Select,
+  Typography,
+  Divider
+} from 'antd'
 import Highlighter from 'react-highlight-words'
 import ExportJsonExcel from 'js-export-excel'
-import { SearchOutlined } from '@ant-design/icons'
+import {
+  SearchOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  PlusOutlined
+} from '@ant-design/icons'
 import App from './components/Layout/index'
 import style from '../styles/Home.module.css'
-import TableFrom from './components/TableForm'
-import { fetchTable } from './api/home'
+import ProductStorageModal from './components/ProductStorageModal'
+import {
+  fetchProductStorage,
+  fetchProductSupplier,
+  addProductSupplier
+} from './api/productStorage'
+const { Option } = Select
 
 const Home = () => {
   const [data, setData] = useState([])
@@ -15,17 +36,34 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [itemData, setItemData] = useState({})
   const [changeData, setChangeData] = useState([])
+  const [name, setName] = useState('')
+  const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
-
   const searchInput = useRef(null)
+
   useEffect(() => {
+    fetchPlat()
+  }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [isModalVisible])
+
+  const fetchPlat = () => {
+    fetchProductSupplier().then((res) => {
+      setItems(res)
+    })
+  }
+
+  const fetchData = (val) => {
+    val = val === '所有供应商' ? '' : val
     setLoading(true)
-    fetchTable().then((res) => {
+    fetchProductStorage(val || '').then((res) => {
       setData(res)
       setChangeData(res)
       setLoading(false)
     })
-  }, [isModalVisible])
+  }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -132,16 +170,12 @@ const Home = () => {
 
   const columns = [
     {
-      title: '送货日期',
+      title: '日期',
       dataIndex: 'date',
       key: 'date',
       width: 130,
+      fixed: 'left',
       ...getColumnSearchProps('date')
-    },
-    {
-      title: '类别',
-      dataIndex: 'type',
-      key: 'type'
     },
     {
       title: '供应商名称',
@@ -150,46 +184,124 @@ const Home = () => {
       key: 'supplierName'
     },
     {
-      title: '规格名称',
-      dataIndex: 'name',
-      key: 'name',
+      title: '产品名称',
+      dataIndex: 'productType',
+      width: 200,
+      key: 'productType',
+      render: (val, re) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={re.total}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              {item.productType}
+            </List.Item>
+          )}
+        />
+      )
+    },
+    {
+      title: '规格',
+      dataIndex: 'specification',
+      key: 'specification',
       width: 150,
-      ...getColumnSearchProps('name')
+      render: (val, re) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={re.total}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              {item.specification}
+            </List.Item>
+          )}
+        />
+      )
+    },
+    {
+      title: '预计使用规格',
+      dataIndex: 'planSpecification',
+      key: 'planSpecification',
+      width: 150,
+      render: (val, re) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={re.total}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              {item.planSpecification}
+            </List.Item>
+          )}
+        />
+      )
     },
     {
       title: '数量',
       dataIndex: 'num',
       key: 'num',
-      sorter: {
-        compare: (a, b) => a.num - b.num
-        // multiple: 3
-      },
-      sortDirections: ['descend', 'ascend']
+      width: 100,
+      render: (val, re) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={re.total}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              {item.num}
+            </List.Item>
+          )}
+        />
+      )
     },
     {
       title: '单价',
       dataIndex: 'unitPrice',
-      key: 'unitPrice'
+      width: 100,
+      key: 'unitPrice',
+      render: (val, re) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={re.total}
+          size={'small'}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: '3px 0'
+              }}
+            >
+              {item.unitPrice}
+            </List.Item>
+          )}
+        />
+      )
     },
     {
       title: '金额/元',
       dataIndex: 'price',
+      width: 150,
       sorter: {
         compare: (a, b) => a.price - b.price
         // multiple: 3
       },
       key: 'price'
-    },
-    {
-      title: '付款日期',
-      dataIndex: 'rePriceDate',
-      key: 'rePriceDate',
-      width: 130
-    },
-    {
-      title: '付款金额',
-      dataIndex: 'rePrice',
-      key: 'rePrice'
     },
     {
       title: '备注',
@@ -204,9 +316,70 @@ const Home = () => {
       )
     },
     {
+      title: '进库审核人',
+      dataIndex: 'auditor',
+      key: 'auditor',
+      width: 100,
+      ...getColumnSearchProps('auditor')
+    },
+    {
+      title: '付款审核人',
+      dataIndex: 'payAuditor',
+      key: 'payAuditor',
+      width: 100,
+      ...getColumnSearchProps('payAuditor')
+    },
+    {
+      title: '付款方式',
+      dataIndex: 'payWay',
+      key: 'payWay',
+      width: 110,
+      render: (val) => (
+        <Tag
+          icon={
+            val === '现结' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+          }
+          color={val === '现结' ? '#55acee' : '#cd201f'}
+        >
+          {val}
+        </Tag>
+      )
+    },
+    {
+      title: '是否付款',
+      dataIndex: 'pay',
+      key: 'pay',
+      width: 110,
+      render: (val) => (
+        <Tag
+          icon={
+            val === '是' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+          }
+          color={val === '是' ? '#55acee' : '#cd201f'}
+        >
+          {val}
+        </Tag>
+      )
+    },
+    {
+      title: '证明材料',
+      dataIndex: 'material',
+      key: 'material',
+      ellipsis: true,
+      width: 150,
+      render: (val) =>
+        val.map((item, index) => (
+          <a target="_blank" key={index} href={item} rel="noreferrer">
+            {item}
+          </a>
+        ))
+    },
+    {
       title: '操作',
       dataIndex: '',
       key: 'x',
+      fixed: 'right',
+      width: 90,
       render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
     }
   ]
@@ -224,39 +397,65 @@ const Home = () => {
     setChangeData(extra.currentDataSource)
   }
 
+  const onNameChange = (event) => {
+    setName(event.target.value)
+  }
+
+  const addItem = (e) => {
+    e.preventDefault()
+    if (name) {
+      addProductSupplier(name)
+      const obj = {}
+      obj['name'] = name
+      setItems([...items, obj])
+      setName('')
+      fetchPlat()
+    }
+  }
+
   const exportTable = () => {
     let sheetFilter = [
       'date',
-      'type',
       'supplierName',
-      'name',
+      'productType',
+      'specification',
+      'planSpecification',
       'num',
       'unitPrice',
       'price',
-      'rePriceDate',
-      'rePrice',
-      'remark'
+      'remark',
+      'auditor',
+      'payAuditor',
+      'payWay',
+      'pay',
+      'total',
+      'material'
     ]
     let option = {}
-    option.fileName = '出货单'
+    option.fileName = '原料进库'
     option.datas = [
       {
         sheetData: changeData,
-        sheetName: '出货单',
+        sheetName: '原料进库',
         sheetFilter: sheetFilter,
         sheetHeader: [
-          '送货日期',
-          '类别',
+          '日期',
           '供应商名称',
-          '规格名称',
+          '产品名称',
+          '规格',
+          '预计使用规格',
           '数量',
           '单价',
           '金额/元',
-          '付款日期',
-          '付款金额',
-          '备注'
+          '备注',
+          '进库审核人',
+          '付款审核人',
+          '付款方式',
+          '是否付款',
+          '汇总',
+          '证明材料'
         ],
-        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10]
+        columnWidths: [5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 10, 5, 5]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new
@@ -267,28 +466,82 @@ const Home = () => {
     <App tab={'home'}>
       <div>
         <div className={style.top}>
-          <Button type="primary" onClick={() => showModal({})}>
-            新增
-          </Button>
-          <Button type="primary" onClick={exportTable} danger ghost>
-            导出
-          </Button>
+          <div>
+            供应商：
+            <Select
+              style={{
+                width: 300
+              }}
+              onChange={fetchData}
+              placeholder="请选择供应商名称"
+              dropdownRender={(menu) => (
+                <>
+                  {menu}
+                  <Divider
+                    style={{
+                      margin: '8px 0'
+                    }}
+                  />
+                  <Space
+                    align="center"
+                    style={{
+                      padding: '0 8px 4px'
+                    }}
+                  >
+                    <Input
+                      placeholder="请输入供应商名称"
+                      value={name}
+                      onChange={onNameChange}
+                    />
+                    <Typography.Link
+                      onClick={addItem}
+                      style={{
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      <PlusOutlined /> 添加供应商
+                    </Typography.Link>
+                  </Space>
+                </>
+              )}
+            >
+              {items.map((item) => (
+                <Option key={item.name}>{item.name}</Option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <Button
+              style={{
+                marginRight: '20px'
+              }}
+              type="primary"
+              onClick={() => showModal({})}
+            >
+              新增
+            </Button>
+            <Button type="primary" onClick={exportTable} danger ghost>
+              导出
+            </Button>
+          </div>
         </div>
         <Table
           loading={loading}
           columns={columns}
           dataSource={data}
+          bordered
           pagination={{
             total: data.length,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 320px)' }}
+          scroll={{ y: 'calc(100vh - 320px)', x: '2500' }}
           onChange={onChange}
         />
         {isModalVisible && (
-          <TableFrom
+          <ProductStorageModal
+            items={items}
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
