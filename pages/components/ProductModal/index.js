@@ -20,7 +20,7 @@ const ProductModal = (props) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [list, setList] = useState([])
-  const { handleCancel, isModalVisible, data, items } = props
+  const { handleFinish, handleCancel, isModalVisible, data, items } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -47,7 +47,7 @@ const ProductModal = (props) => {
             setLoading(false)
             message.success('保存成功！')
             form.resetFields()
-            handleCancel()
+            handleFinish()
           } else {
             setLoading(false)
             message.error('保存失败！')
@@ -59,7 +59,7 @@ const ProductModal = (props) => {
             setLoading(false)
             message.success('修改成功！')
             form.resetFields()
-            handleCancel()
+            handleFinish()
           } else {
             setLoading(false)
             message.error('修改失败！')

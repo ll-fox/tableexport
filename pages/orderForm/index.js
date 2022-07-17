@@ -282,6 +282,11 @@ const Home = () => {
     setIsModalVisible(false)
   }
 
+  const handleFinish = () => {
+    setIsModalVisible(false)
+    fetchData()
+  }
+
   const onChange = (pagination, filters, sorter, extra) => {
     setChangeData(extra.currentDataSource)
   }
@@ -400,6 +405,7 @@ const Home = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleFinish={handleFinish}
           />
         )}
       </div>

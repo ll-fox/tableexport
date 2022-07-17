@@ -234,6 +234,11 @@ const Product = () => {
     setIsModalVisible(false)
   }
 
+  const handleFinish = () => {
+    setIsModalVisible(false)
+    fetchData()
+  }
+
   const onNameChange = (event) => {
     setName(event.target.value)
   }
@@ -250,9 +255,6 @@ const Product = () => {
     }
   }
 
-  //   const onChange = (value) => {
-  //     fetchData(value)
-  //   }
 
   return (
     <App tab={'product'}>
@@ -327,6 +329,7 @@ const Product = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleFinish={handleFinish}
           />
         )}
       </div>

@@ -42,7 +42,7 @@ const getBase64 = (file) =>
 
 const ProductStorageModal = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, isModalVisible, data, items } = props
+  const { handleReplyFinish, handleCancel, isModalVisible, data, items } = props
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -92,7 +92,7 @@ const ProductStorageModal = (props) => {
             setLoading(false)
             message.success('保存成功！')
             form.resetFields()
-            handleCancel()
+            handleReplyFinish()
           } else {
             setLoading(false)
             message.error('修改失败！')
@@ -104,7 +104,7 @@ const ProductStorageModal = (props) => {
             setLoading(false)
             message.success('修改成功！')
             form.resetFields()
-            handleCancel()
+            handleReplyFinish()
           } else {
             setLoading(false)
             message.error('修改失败！')

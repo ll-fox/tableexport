@@ -43,7 +43,7 @@ const getBase64 = (file) =>
 
 const MaterialStorageModal = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, isModalVisible, data, items } = props
+  const { handleFinish, handleCancel, isModalVisible, data, items } = props
 
   let newData = cloneDeep(data)
   if (!isEmpty(data)) {
@@ -76,7 +76,7 @@ const MaterialStorageModal = (props) => {
             setLoading(false)
             message.success('保存成功！')
             form.resetFields()
-            handleCancel()
+            handleFinish()
           } else {
             setLoading(false)
             message.error('保存失败！')
@@ -88,7 +88,7 @@ const MaterialStorageModal = (props) => {
             setLoading(false)
             message.success('修改成功！')
             form.resetFields()
-            handleCancel()
+            handleFinish()
           } else {
             setLoading(false)
             message.error('修改失败！')

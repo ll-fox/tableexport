@@ -10,6 +10,7 @@ import {
 import App from '../components/Layout/index'
 import style from './index.module.css'
 import AfterModal from '../components/AfterModal'
+import ReplyModal from '../components/AfterModal/reply'
 import { fetchTable } from '../api/aftersales'
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isReplyModalVisible, setReplyIsModalVisible] = useState(false)
   const [itemData, setItemData] = useState({})
   const [changeData, setChangeData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -29,7 +31,7 @@ const Home = () => {
       setChangeData(res)
       setLoading(false)
     })
-  }, [isModalVisible])
+  }, [])
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -155,13 +157,13 @@ const Home = () => {
       width: 100,
       key: 'expressage'
     },
-    {
-      title: '平台订单号',
-      dataIndex: 'platformOrderNumber',
-      key: 'platformOrderNumber',
-      width: 180,
-      ...getColumnSearchProps('platformOrderNumber')
-    },
+    // {
+    //   title: '平台订单号',
+    //   dataIndex: 'platformOrderNumber',
+    //   key: 'platformOrderNumber',
+    //   width: 180,
+    //   ...getColumnSearchProps('platformOrderNumber')
+    // },
     {
       title: '快递单号',
       dataIndex: 'odd',
@@ -182,28 +184,33 @@ const Home = () => {
       width: 140,
       key: 'phone'
     },
-    {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
-      width: 180,
-      ellipsis: true,
-      render: (val) => (
-        <Tooltip placement="topLeft" title={val}>
-          {val}
-        </Tooltip>
-      )
-    },
+    // {
+    //   title: '地址',
+    //   dataIndex: 'address',
+    //   key: 'address',
+    //   width: 180,
+    //   ellipsis: true,
+    //   render: (val) => (
+    //     <Tooltip placement="topLeft" title={val}>
+    //       {val}
+    //     </Tooltip>
+    //   )
+    // },
     {
       title: '售后原因',
       dataIndex: 'reason',
-      width: 180,
-      ellipsis: true,
+      width: 300,
       key: 'reason',
-      render: (val) => (
-        <Tooltip placement="topLeft" title={val}>
-          {val}
-        </Tooltip>
+      render: (val, re) => (
+        <div>
+          <span> {val}</span>
+          <a
+            style={{ marginLeft: '3px', fontWeight: '700' }}
+            onClick={() => showReplyModal(re)}
+          >
+            回复
+          </a>
+        </div>
       )
     },
     {
@@ -234,12 +241,12 @@ const Home = () => {
         </Tooltip>
       )
     },
-    {
-      title: '售后金额',
-      dataIndex: 'price',
-      width: 100,
-      key: 'price'
-    },
+    // {
+    //   title: '售后金额',
+    //   dataIndex: 'price',
+    //   width: 100,
+    //   key: 'price'
+    // },
     {
       title: '操作',
       dataIndex: '',
@@ -257,6 +264,35 @@ const Home = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+  }
+
+  const handleFinish = () => {
+    setIsModalVisible(false)
+    setLoading(true)
+    fetchTable().then((res) => {
+      setData(res)
+      setChangeData(res)
+      setLoading(false)
+    })
+  }
+
+  const showReplyModal = (re) => {
+    setItemData(re)
+    setReplyIsModalVisible(true)
+  }
+
+  const handleReplyCancel = () => {
+    setReplyIsModalVisible(false)
+  }
+
+  const handleReplyFinish = () => {
+    setReplyIsModalVisible(false)
+    setLoading(true)
+    fetchTable().then((res) => {
+      setData(res)
+      setChangeData(res)
+      setLoading(false)
+    })
   }
 
   const onChange = (pagination, filters, sorter, extra) => {
@@ -335,6 +371,15 @@ const Home = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleFinish={handleFinish}
+          />
+        )}
+        {isReplyModalVisible && (
+          <ReplyModal
+            handleReplyFinish={handleReplyFinish}
+            isModalVisible={true}
+            data={itemData}
+            handleCancel={handleReplyCancel}
           />
         )}
       </div>

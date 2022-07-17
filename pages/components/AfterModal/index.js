@@ -28,7 +28,7 @@ const config = {
 
 const TableForm = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, isModalVisible, data } = props
+  const { handleFinish, handleCancel, isModalVisible, data } = props
   const [items, setItems] = useState([])
   const [expressages, setExpressages] = useState([])
   const [loading, setLoading] = useState(false)
@@ -52,12 +52,19 @@ const TableForm = (props) => {
       if (isEmpty(data)) {
         judgeContains(values.odd).then((res) => {
           if (isEmpty(res)) {
+            const obj = {
+              text: values.reason,
+              name: values.auditor,
+              time: moment().format('YYYY-MM-DD HH:mm')
+            }
+            values.reasonList = [obj]
+            delete values.auditor
             addItem(values).then((res) => {
               if (res) {
                 setLoading(false)
                 message.success('保存成功！')
                 form.resetFields()
-                handleCancel()
+                handleFinish()
               } else {
                 setLoading(false)
                 message.success('保存失败！')
@@ -75,7 +82,7 @@ const TableForm = (props) => {
             setLoading(false)
             message.success('修改成功！')
             form.resetFields()
-            handleCancel()
+            handleFinish()
           } else {
             setLoading(false)
             message.error('修改失败！')
@@ -170,19 +177,21 @@ const TableForm = (props) => {
         <Form.Item name="address" label="地址">
           <Input />
         </Form.Item>
-        <Form.Item
-          name="reason"
-          label="售后原因"
-          rules={[
-            {
-              type: 'string',
-              required: true,
-              message: '请输入售后原因!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
+        {isEmpty(data) && (
+          <Form.Item
+            name="reason"
+            label="售后原因"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+                message: '请输入售后原因!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        )}
         <Form.Item
           name="dealwith"
           label="是否已处理"
@@ -198,6 +207,24 @@ const TableForm = (props) => {
             <Option value="否">否</Option>
           </Select>
         </Form.Item>
+        {isEmpty(data) && (
+          <Form.Item
+            name="auditor"
+            label="处理人"
+            rules={[
+              {
+                required: true,
+                message: '请选择处理人!'
+              }
+            ]}
+          >
+            <Select style={{ width: 250 }}>
+              {['杨一凡', '米佳乐', '石喆'].map((name) => (
+                <Option key={name}>{name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item name="result" label="处理结果">
           <TextArea />
         </Form.Item>

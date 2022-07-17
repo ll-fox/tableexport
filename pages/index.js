@@ -47,7 +47,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [isModalVisible])
+  }, [])
 
   const fetchPlat = () => {
     fetchProductSupplier().then((res) => {
@@ -175,7 +175,11 @@ const Home = () => {
       key: 'date',
       width: 130,
       fixed: 'left',
-      ...getColumnSearchProps('date')
+      sorter: {
+        compare: (a, b) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        // multiple: 3
+      }
     },
     {
       title: '供应商名称',
@@ -393,6 +397,11 @@ const Home = () => {
     setIsModalVisible(false)
   }
 
+  const handleReplyFinish = () => {
+    setIsModalVisible(false)
+    fetchData()
+  }
+
   const onChange = (pagination, filters, sorter, extra) => {
     setChangeData(extra.currentDataSource)
   }
@@ -545,6 +554,7 @@ const Home = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleReplyFinish={handleReplyFinish}
           />
         )}
       </div>

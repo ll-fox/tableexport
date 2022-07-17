@@ -9,7 +9,7 @@ const { TextArea } = Input
 
 const TableForm = (props) => {
   const [form] = Form.useForm()
-  const { handleCancel, isModalVisible, data } = props
+  const { handleFinish, handleCancel, isModalVisible, data } = props
   const [loading, setLoading] = useState(false)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
@@ -27,7 +27,7 @@ const TableForm = (props) => {
         if (res) {
           message.success('修改成功！')
           form.resetFields()
-          handleCancel()
+          handleFinish()
         } else {
           message.error('修改失败！')
         }

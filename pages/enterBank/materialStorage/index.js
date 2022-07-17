@@ -45,7 +45,7 @@ const MaterialStorage = () => {
 
   useEffect(() => {
     fetchData()
-  }, [isModalVisible])
+  }, [])
 
   const fetchPlat = () => {
     fetchSupplier().then((res) => {
@@ -296,6 +296,11 @@ const MaterialStorage = () => {
     setIsModalVisible(false)
   }
 
+  const handleFinish = () => {
+    setIsModalVisible(false)
+    fetchData()
+  }
+
   const onNameChange = (event) => {
     setName(event.target.value)
   }
@@ -385,6 +390,7 @@ const MaterialStorage = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleFinish={handleFinish}
           />
         )}
       </div>

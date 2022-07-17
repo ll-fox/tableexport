@@ -192,6 +192,11 @@ const Expressage = () => {
     setIsModalVisible(false)
   }
 
+  const handleFinish = () => {
+    setIsModalVisible(false)
+    fetchData()
+  }
+
   return (
     <App tab={'expressage'}>
       <div>
@@ -221,6 +226,7 @@ const Expressage = () => {
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
+            handleFinish={handleFinish}
           />
         )}
       </div>
