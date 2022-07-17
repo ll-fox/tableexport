@@ -69,18 +69,18 @@ const ReplyModal = (props) => {
       >
         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 10 }}>
           <Form.Item style={{ marginBottom: '3px' }} label="平台">
-            {newData.platform}
+            {newData?.platform}
           </Form.Item>
           <Form.Item style={{ marginBottom: '3px' }} label="收件人">
-            {newData.username}
+            {newData?.username}
           </Form.Item>
           <Form.Item style={{ marginBottom: '3px' }} label="快递">
-            {newData.expressage}
+            {newData?.expressage}
           </Form.Item>
         </Form>
         <Divider>回复历史</Divider>
         <Timeline mode="right">
-          {(newData.reasonList || []).map((item, index) => (
+          {(newData?.reasonList || []).map((item, index) => (
             <Timeline.Item
               key={index}
               label={`${item.name || '处理人暂无'} ${item.time || '时间暂无'}`}
