@@ -5,7 +5,7 @@ import {
   Modal,
   List,
   message,
-  Typography,
+  Select,
   Divider,
   Timeline
 } from 'antd'
@@ -14,6 +14,7 @@ import { updateItem } from '../../api/aftersales'
 import moment from 'moment'
 import { cloneDeep, isEmpty } from 'lodash'
 const { TextArea } = Input
+const { Option } = Select
 
 const ReplyModal = (props) => {
   const [form] = Form.useForm()
@@ -68,14 +69,23 @@ const ReplyModal = (props) => {
         }}
       >
         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 10 }}>
-          <Form.Item style={{ marginBottom: '3px' }} label="平台">
+          <Form.Item style={{ marginBottom: 0 }} label="反馈时间">
+            {newData?.date}
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }} label="平台">
             {newData?.platform}
           </Form.Item>
-          <Form.Item style={{ marginBottom: '3px' }} label="收件人">
+          <Form.Item style={{ marginBottom: 0 }} label="收件人">
             {newData?.username}
           </Form.Item>
-          <Form.Item style={{ marginBottom: '3px' }} label="快递">
+          <Form.Item style={{ marginBottom: 0 }} label="收件人电话">
+            {newData?.phone}
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }} label="快递">
             {newData?.expressage}
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }} label="快递单号">
+            {newData?.odd}
           </Form.Item>
         </Form>
         <Divider>回复历史</Divider>
@@ -121,7 +131,11 @@ const ReplyModal = (props) => {
               }
             ]}
           >
-            <Input />
+            <Select style={{ width: 250 }}>
+              {['杨一凡', '米佳乐', '石喆', '程美玲'].map((name) => (
+                <Option key={name}>{name}</Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </div>
