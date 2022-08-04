@@ -3,7 +3,7 @@ const AV = require('leancloud-storage')
 AV.init({
   appId: 'RgJnG8EpuIlP35di6d98C8sK-MdYXbMMI',
   appKey: '5jaazvJechfzPLn2dsCcelj4',
-  serverURL: 'https://jwny.xyz'
+  serverURL: 'https://admin.jwny.xyz'
 })
 
 const signUp = async (username, password) => {
