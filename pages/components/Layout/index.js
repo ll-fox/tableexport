@@ -96,15 +96,15 @@ const App = (props = {}) => {
         </Link>
       ),
       key: 'capital'
+    },
+    {
+      label: (
+        <Link href="/quotationSheet">
+          <a>模版</a>
+        </Link>
+      ),
+      key: 'template'
     }
-    // {
-    //   label: (
-    //     <Link href="/template">
-    //       <a>模版</a>
-    //     </Link>
-    //   ),
-    //   key: 'template'
-    // }
   ]
   return (
     <ConfigProvider locale={zhCN}>
@@ -181,7 +181,8 @@ const App = (props = {}) => {
         <Content
           style={{
             padding: '0 30px',
-            marginTop: '60px'
+            marginTop: '60px',
+            overflow: 'scroll'
           }}
         >
           <Breadcrumb
@@ -198,6 +199,9 @@ const App = (props = {}) => {
           style={{
             padding: '5px 50px',
             textAlign: 'center'
+            // width: '100%',
+            // position: 'fixed',
+            // bottom: 0
           }}
         >
           Table Export ©2022 Created by LIULIN
