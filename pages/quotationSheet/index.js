@@ -25,6 +25,7 @@ export default function QuotationSheet() {
   const [previewTitle, setPreviewTitle] = useState('')
   const [fileList, setFileList] = useState([])
   const [typeArr, setTypeArr] = useState([])
+  const [areaArr, setAreaArr] = useState([])
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -45,9 +46,11 @@ export default function QuotationSheet() {
     <div>
       <PlusOutlined />
       <div
-        style={{
-          marginTop: 8
-        }}
+        style={
+          {
+            // marginTop: 8
+          }
+        }
       >
         上传图片
       </div>
@@ -132,7 +135,9 @@ export default function QuotationSheet() {
 
             <tr
               style={{
-                lineHeight: '15px'
+                lineHeight: '15px',
+                fontWeight: '500',
+                fontSize: '13px'
               }}
             >
               <td width="100" align="center">
@@ -153,11 +158,11 @@ export default function QuotationSheet() {
               <td width="100" align="center">
                 外箱成本（元）
               </td>
-              <td width="100" align="center">
-                吸塑盒成本
+              <td contentEditable="true" width="100" align="center">
+                其他成本1
               </td>
-              <td width="100" align="center">
-                泡沫箱成本
+              <td contentEditable="true" width="100" align="center">
+                其他成本2
               </td>
               <td width="100" align="center">
                 胶带
@@ -190,91 +195,340 @@ export default function QuotationSheet() {
             </tr>
             {typeArr.map((item, index) => (
               <tr key={index}>
-                <td width="100" colSpan="1" align="center">
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                >
                   {`规格名称${index + 1}`}
                 </td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
-                <td width="100" colSpan="1" align="center"></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                ></td>
               </tr>
             ))}
             <tr id="printHide" width="100" align="center">
               <th width="100" colSpan="16">
                 <span
                   style={{
-                    color: '#1890ff',
+                    color: '#f8c81a',
                     border: '1px',
                     cursor: 'pointer',
                     fontSize: '14px',
-                    fontWeight: '300'
+                    fontWeight: '500'
                   }}
                   onClick={() => {
                     setTypeArr([...typeArr, {}])
                   }}
                 >
-                  + 添加
+                  + 添加规格
                 </span>
               </th>
             </tr>
             <tr align="center">
-              <th colSpan="16" bgcolor="lightgray">
+              <th
+                style={{
+                  fontFamily: 'serif',
+                  fontWeight: '800'
+                }}
+                colSpan="16"
+                bgcolor="lightgray"
+              >
                 快递
               </th>
             </tr>
             <tr>
-              <td width="100" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                colSpan="2"
+                align="center"
+              >
                 快递名称
               </td>
-              <td width="100" colSpan="14" align="center">
+              <td
+                contentEditable="true"
+                width="100"
+                colSpan="14"
+                align="center"
+              >
                 ...
               </td>
             </tr>
             <tr>
-              <td width="100" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                colSpan="2"
+                align="center"
+              >
                 不发货区域
               </td>
-              <td width="100" colSpan="14" align="center">
+              <td
+                contentEditable="true"
+                width="100"
+                colSpan="14"
+                align="center"
+              >
                 ...
               </td>
             </tr>
             <tr>
-              <td width="100" height="18" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                colSpan="2"
+                align="center"
+              >
+                加价区域
+              </td>
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                colSpan="7"
+                align="center"
+              >
+                规格
+              </td>
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                colSpan="7"
+                align="center"
+              >
+                加价（元）
+              </td>
+            </tr>
+            {areaArr.map((item, index) => (
+              <tr key={index}>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="2"
+                  align="center"
+                >
+                  地区{index + 1}
+                </td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="7"
+                  align="center"
+                ></td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="7"
+                  align="center"
+                ></td>
+              </tr>
+            ))}
+            <tr id="printHide" width="100" align="center">
+              <th width="100" colSpan="16">
+                <span
+                  style={{
+                    color: '#f8c81a',
+                    border: '1px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                  onClick={() => {
+                    setAreaArr([...areaArr, {}])
+                  }}
+                >
+                  + 添加加价区域
+                </span>
+              </th>
+            </tr>
+            <tr>
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                height="18"
+                colSpan="2"
+                align="center"
+              >
                 发货地
               </td>
-              <td width="100" height="18" colSpan="2" align="center">
-                陕西·富平
+              <td
+                contentEditable="true"
+                width="100"
+                height="18"
+                colSpan="2"
+                align="center"
+              >
+                ......
               </td>
-              <td width="100" rowSpan="2" colSpan="1" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                rowSpan="2"
+                colSpan="1"
+                align="center"
+              >
                 发货时间
               </td>
-              <td width="100" rowSpan="2" colSpan="1" align="center">
-                48小时
+              <td
+                contentEditable="true"
+                width="100"
+                rowSpan="2"
+                colSpan="1"
+                align="center"
+              >
+                .......
               </td>
-              <td width="100" rowSpan="2" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                rowSpan="2"
+                colSpan="2"
+                align="center"
+              >
                 日发货最大单
               </td>
-              <td width="100" rowSpan="2" colSpan="1" align="center">
-                10000单
+              <td
+                contentEditable="true"
+                width="100"
+                rowSpan="2"
+                colSpan="1"
+                align="center"
+              >
+                ........
               </td>
-              <td width="100" rowSpan="2" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                rowSpan="2"
+                colSpan="2"
+                align="center"
+              >
                 发票类型
               </td>
-              <td width="100" rowSpan="2" colSpan="2" align="center">
-                增值税专用发票
+              <td
+                contentEditable="true"
+                width="100"
+                rowSpan="2"
+                colSpan="2"
+                align="center"
+              >
+                ........
               </td>
-              <td width="100" rowSpan="2" colSpan="1" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                rowSpan="2"
+                colSpan="1"
+                align="center"
+              >
                 包装图
               </td>
               <td width="100" rowSpan="2" colSpan="2" align="center">
@@ -292,11 +546,25 @@ export default function QuotationSheet() {
               </td>
             </tr>
             <tr>
-              <td width="100" height="18" colSpan="2" align="center">
+              <td
+                style={{
+                  fontWeight: '500'
+                }}
+                width="100"
+                height="18"
+                colSpan="2"
+                align="center"
+              >
                 产地
               </td>
-              <td width="100" height="18" colSpan="2" align="center">
-                陕西·大荔
+              <td
+                contentEditable="true"
+                width="100"
+                height="18"
+                colSpan="2"
+                align="center"
+              >
+                ......
               </td>
             </tr>
           </table>
