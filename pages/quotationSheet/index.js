@@ -26,6 +26,8 @@ export default function QuotationSheet() {
   const [fileList, setFileList] = useState([])
   const [typeArr, setTypeArr] = useState([])
   const [areaArr, setAreaArr] = useState([])
+  const [loss, setLoss] = useState(5)
+  let cost = ''
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -42,6 +44,28 @@ export default function QuotationSheet() {
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList)
   const handleCancel = () => setPreviewOpen(false)
 
+  const change = (e, index, type) => {
+    let obj = typeArr[index] || {}
+    obj[type] = Number(e.target.textContent)
+    let Arr = typeArr.concat()
+    Arr[index] = obj
+    setTypeArr(Arr)
+    cost =
+      (typeArr[index]?.price || 0) *
+        (typeArr[index]?.num || 0) *
+        (loss / 100 + 1) +
+      (typeArr[index]?.pack || 0) +
+      (typeArr[index]?.place || 0) +
+      (typeArr[index]?.other || 0) +
+      (typeArr[index]?.other1 || 0) +
+      (typeArr[index]?.tape || 0) +
+      (typeArr[index]?.human || 0) +
+      (typeArr[index]?.expressage || 0) +
+      (typeArr[index]?.carry || 0) +
+      (typeArr[index]?.service || 0) +
+      (typeArr[index]?.place || 0)
+    console.log(1111, e.target.textContent, cost)
+  }
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -56,6 +80,7 @@ export default function QuotationSheet() {
       </div>
     </div>
   )
+  console.log(333, typeArr)
   return (
     <App tab={'template'}>
       {/* <Modal
@@ -152,8 +177,21 @@ export default function QuotationSheet() {
                 净重（斤）
               </td>
               <td width="100" align="center">
-                计算损耗后原材料价格 <br />
-                （5%计算）
+                计算损耗后原材料价格 <br />（
+                <span
+                  style={{
+                    fontSize: '15px',
+                    color: 'rgb(215 175 95)'
+                  }}
+                  contentEditable="true"
+                  onBlur={(e) => {
+                    const value = Number(e.target.textContent)
+                    setLoss(value)
+                  }}
+                >
+                  5
+                </span>
+                %计算）
               </td>
               <td width="100" align="center">
                 外箱成本（元）
@@ -208,90 +246,130 @@ export default function QuotationSheet() {
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'price')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'num')}
+                ></td>
+                <td
+                  // contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                >
+                  {(typeArr[index]?.price || 0) *
+                    (typeArr[index]?.num || 0) *
+                    (loss / 100 + 1)}
+                </td>
+                <td
+                  contentEditable="true"
+                  width="100"
+                  colSpan="1"
+                  align="center"
+                  onBlur={(e) => change(e, index, 'pack')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'other')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'other1')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'tape')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'human')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'expressage')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'carry')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'service')}
                 ></td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
+                  onBlur={(e) => change(e, index, 'place')}
                 ></td>
+                <td width="100" colSpan="1" align="center">
+                  {(typeArr[index]?.price || 0) *
+                    (typeArr[index]?.num || 0) *
+                    (loss / 100 + 1) +
+                    (typeArr[index]?.pack || 0) +
+                    (typeArr[index]?.place || 0) +
+                    (typeArr[index]?.other || 0) +
+                    (typeArr[index]?.other1 || 0) +
+                    (typeArr[index]?.tape || 0) +
+                    (typeArr[index]?.human || 0) +
+                    (typeArr[index]?.expressage || 0) +
+                    (typeArr[index]?.carry || 0) +
+                    (typeArr[index]?.service || 0) +
+                    (typeArr[index]?.place || 0)}
+                </td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
-                ></td>
+                >
+                  {(typeArr[index]?.offer || 0) -
+                    ((typeArr[index]?.price || 0) *
+                      (typeArr[index]?.num || 0) *
+                      (loss / 100 + 1) +
+                      (typeArr[index]?.pack || 0) +
+                      (typeArr[index]?.place || 0) +
+                      (typeArr[index]?.other || 0) +
+                      (typeArr[index]?.other1 || 0) +
+                      (typeArr[index]?.tape || 0) +
+                      (typeArr[index]?.human || 0) +
+                      (typeArr[index]?.expressage || 0) +
+                      (typeArr[index]?.carry || 0) +
+                      (typeArr[index]?.service || 0) +
+                      (typeArr[index]?.place || 0))}
+                </td>
                 <td
                   contentEditable="true"
                   width="100"
                   colSpan="1"
                   align="center"
-                ></td>
-                <td
-                  contentEditable="true"
-                  width="100"
-                  colSpan="1"
-                  align="center"
-                ></td>
-                <td
-                  contentEditable="true"
-                  width="100"
-                  colSpan="1"
-                  align="center"
-                ></td>
-                <td
-                  contentEditable="true"
-                  width="100"
-                  colSpan="1"
-                  align="center"
+                  onBlur={(e) => change(e, index, 'offer')}
                 ></td>
               </tr>
             ))}
