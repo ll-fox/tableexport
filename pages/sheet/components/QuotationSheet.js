@@ -1,13 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react'
-import App from './../components/Layout/index'
 import dynamic from 'next/dynamic'
 import { Upload, Button, Modal } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
-const ModalContainer = dynamic(() => import('../../lib/exportPDF'), {
+const ModalContainer = dynamic(() => import('../../../lib/exportPDF'), {
   ssr: false //这个要加上,禁止使用 SSR
 })
-import { exportPDF } from '../../lib/exportPDF'
+import { exportPDF } from '../../../lib/exportPDF'
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -82,21 +81,6 @@ export default function QuotationSheet() {
   )
   console.log(333, typeArr)
   return (
-    <App tab={'template'}>
-      {/* <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img
-          alt="example"
-          style={{
-            width: '100%'
-          }}
-          src={previewImage}
-        />
-      </Modal> */}
       <div style={{ background: '#fff' }}>
         <div style={{ textAlign: 'right' }}>
           <Button
@@ -648,6 +632,5 @@ export default function QuotationSheet() {
           </table>
         </div>
       </div>
-    </App>
   )
 }

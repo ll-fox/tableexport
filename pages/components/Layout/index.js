@@ -99,7 +99,7 @@ const App = (props = {}) => {
     },
     {
       label: (
-        <Link href="/quotationSheet">
+        <Link href="/sheet">
           <a>模版</a>
         </Link>
       ),
