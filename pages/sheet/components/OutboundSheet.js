@@ -1,6 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import { Select, Button, DatePicker } from 'antd'
+import {
+  Select,
+  Button,
+  DatePicker,
+  List,
+  Typography,
+  Input,
+  Space
+} from 'antd'
+import { addWarehouse, fetchWarehouse, destroyWarehouse } from '../../api/sheet'
 import { PlusOutlined } from '@ant-design/icons'
 
 const ModalContainer = dynamic(() => import('../../../lib/exportPDF'), {
@@ -25,6 +34,33 @@ export default function OutboundSheet() {
   const [fileList, setFileList] = useState([])
   const [typeArr, setTypeArr] = useState([])
   const [cost, setCost] = useState(0)
+  const [warehouse,setWarehouse] = useState([])
+  const [name, setName] = useState('')
+
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = () => {
+    fetchWarehouse().then((res) => {
+        console.log(222,res);
+      setWarehouse(res)
+    })
+  }
+
+  const addItem = (e) => {
+    e.preventDefault()
+    if (name) {
+      addWarehouse(name)
+      setName('')
+      fetchData()
+    }
+  }
+
+  const onNameChange = (event) => {
+    setName(event.target.value)
+  }
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -53,7 +89,6 @@ export default function OutboundSheet() {
     })
     setCost(result)
   }
-
   const ToString = (n) =>{
     if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(n)){
         return "数据非法";  //判断数据是否大于0
@@ -72,8 +107,76 @@ export default function OutboundSheet() {
 }
   return (
     <div style={{ background: '#fff' }}>
+      <div
+        style={{
+          width: '70%',
+          margin: '0 auto'
+        }}
+      >
+        <List
+          size="small"
+          header={
+            <div
+              style={{
+                fontSize: '20px',
+                color: 'rgb(248, 200, 26)'
+              }}
+            >
+              发货仓库
+            </div>
+          }
+          footer={
+            <div>
+              <Space
+                align="center"
+                style={{
+                  padding: '0 8px 4px'
+                }}
+              >
+                <Input
+                  placeholder="请输入发货仓库"
+                  value={name}
+                  onChange={onNameChange}
+                />
+                <Typography.Link
+                  onClick={addItem}
+                  style={{
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  <PlusOutlined /> 添加发货仓库
+                </Typography.Link>
+              </Space>
+            </div>
+          }
+          bordered
+          dataSource={warehouse}
+          renderItem={(item, index) => (
+            <List.Item
+              key={index}
+              actions={[
+                <a
+                  key="list-loadmore-edit"
+                  onClick={() => {
+                    destroyWarehouse(warehouse[index]).then(() => {
+                      fetchData()
+                    })
+                  }}
+                >
+                  删除
+                </a>
+              ]}
+            >
+              {item.name}
+            </List.Item>
+          )}
+        />
+      </div>
       <div style={{ textAlign: 'right' }}>
         <Button
+          style={{
+            margin: 10
+          }}
           type="primary"
           onClick={() => exportPDF('测试导出PDF', exportDom.current)}
         >
@@ -145,25 +248,15 @@ export default function OutboundSheet() {
             </td>
             <td width="450" colSpan="4" align="center">
               <Select
-                defaultValue="lucy"
+                defaultValue={warehouse[0]?.name || ''}
                 style={{
                   width: 120
                 }}
                 bordered={false}
-                options={[
-                  {
-                    value: 'jack',
-                    label: 'Jack'
-                  },
-                  {
-                    value: 'lucy',
-                    label: 'Lucy'
-                  },
-                  {
-                    value: 'Yiminghe',
-                    label: 'yiminghe'
-                  }
-                ]}
+                options={warehouse.map((item) => ({
+                  value: item.name,
+                  label: item.name
+                }))}
               />
             </td>
             <td width="150" colSpan="1" align="center">
@@ -349,7 +442,7 @@ export default function OutboundSheet() {
             <td width="150" colSpan="1" align="center">
               总计大写
             </td>
-            <td width="150"  colSpan="14" align="center">
+            <td width="150" colSpan="14" align="center">
               {ToString(cost)}
             </td>
           </tr>
@@ -381,7 +474,7 @@ export default function OutboundSheet() {
             <td width="150" colSpan="1" align="center">
               开票及公司邮箱
             </td>
-            <td width="150"  colSpan="14">
+            <td width="150" colSpan="14">
               yangyifan@jwny.partner.onmschina.cn（请将送货单照片和开票信息发邮箱）
             </td>
           </tr>
@@ -395,7 +488,7 @@ export default function OutboundSheet() {
             <td width="150" colSpan="1" align="center">
               公司联系电话及地址
             </td>
-            <td width="150"  colSpan="14">
+            <td width="150" colSpan="14">
               15829000737/陕西省渭南市富平县曹村镇太白村一组
             </td>
           </tr>
@@ -409,7 +502,7 @@ export default function OutboundSheet() {
             <td width="150" colSpan="1" align="center">
               公司官网
             </td>
-            <td width="150"  colSpan="14">
+            <td width="150" colSpan="14">
               JWNY.xyz
             </td>
           </tr>
