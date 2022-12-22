@@ -9,7 +9,16 @@ import {
   Input,
   Space
 } from 'antd'
-import { addWarehouse, fetchWarehouse, destroyWarehouse } from '../../api/sheet'
+import {
+  addWarehouse,
+  fetchWarehouse,
+  destroyWarehouse,
+  fetchProductName,
+  addProductName,
+  destroyProductName
+} from '../../api/sheet'
+import moment from 'moment'
+
 import { PlusOutlined } from '@ant-design/icons'
 
 const ModalContainer = dynamic(() => import('../../../lib/exportPDF'), {
@@ -35,7 +44,9 @@ export default function OutboundSheet() {
   const [typeArr, setTypeArr] = useState([])
   const [cost, setCost] = useState(0)
   const [warehouse,setWarehouse] = useState([])
+  const [product, setProduct] = useState([])
   const [name, setName] = useState('')
+  const [productName, setProductName] = useState('')
 
 
   useEffect(() => {
@@ -44,8 +55,13 @@ export default function OutboundSheet() {
 
   const fetchData = () => {
     fetchWarehouse().then((res) => {
-        console.log(222,res);
       setWarehouse(res)
+    })
+  }
+
+  const fetchProductData = () => {
+    fetchProductName().then((res) => {
+      setProduct(res)
     })
   }
 
@@ -54,12 +70,26 @@ export default function OutboundSheet() {
     if (name) {
       addWarehouse(name)
       setName('')
+      setProductName('')
       fetchData()
+    }
+  }
+
+  const addProductItem = (e) => {
+    e.preventDefault()
+    if (productName) {
+      addProductName(productName)
+      setProductName('')
+      fetchProductData()
     }
   }
 
   const onNameChange = (event) => {
     setName(event.target.value)
+  }
+
+  const onProduceNameChange = (event) => {
+    setProductName(event.target.value)
   }
 
   const handlePreview = async (file) => {
@@ -106,14 +136,16 @@ export default function OutboundSheet() {
     return str.replace(/零(千|百|拾|角)/g, "零").replace(/(零)+/g, "零").replace(/零(万|亿|元)/g, "$1").replace(/(亿)万|壹(拾)/g, "$1$2").replace(/^元零?|零分/g, "").replace(/元$/g, "元整"); // 替换掉数字里面的零字符，得到结果
 }
   return (
-    <div style={{ background: '#fff' }}>
+    <div style={{ background: '#fff', display: 'flex' }}>
       <div
         style={{
-          width: '70%',
-          margin: '0 auto'
+          width: '50%'
         }}
       >
         <List
+          style={{
+            margin: '72px auto'
+          }}
           size="small"
           header={
             <div
@@ -144,7 +176,7 @@ export default function OutboundSheet() {
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  <PlusOutlined /> 添加发货仓库
+                  <PlusOutlined /> 添加仓库
                 </Typography.Link>
               </Space>
             </div>
@@ -171,381 +203,554 @@ export default function OutboundSheet() {
             </List.Item>
           )}
         />
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        <Button
-          style={{
-            margin: 10
-          }}
-          type="primary"
-          onClick={() => exportPDF('测试导出PDF', exportDom.current)}
-        >
-          导出PDF
-        </Button>
-      </div>
-      <div
-        ref={exportDom}
-        style={{
-          width: '80%',
-          padding: 30,
-          boxSizing: 'border-box',
-          margin: '0 auto',
-          lineHeight: '27px',
-          fontSize: 13,
-          overflow: 'hidden'
-        }}
-      >
-        <table
-          width="95%"
-          //   height="30%"
-          cellPadding="10"
-          cellSpacing="0"
-          border="1"
-          align="center"
-        >
-          <tr align="center">
-            <th
+        <List
+          size="small"
+          header={
+            <div
               style={{
-                position: 'relative'
+                fontSize: '20px',
+                color: 'rgb(248, 200, 26)'
               }}
-              colSpan="16"
-              bgcolor="lightgray"
             >
-              <span
+              商品名称
+            </div>
+          }
+          footer={
+            <div>
+              <Space
+                align="center"
                 style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontSize: '20px',
-                  lineHeight: '50px',
-                  fontFamily: 'serif'
+                  padding: '0 8px 4px'
                 }}
               >
-                <img
-                  alt="ll"
-                  src={'/images/logo.png'}
-                  style={{
-                    width: '230px',
-                    height: '80px',
-                    position: 'absolute',
-                    left: 0
-                  }}
+                <Input
+                  placeholder="请输入商品名称"
+                  value={productName}
+                  onChange={onProduceNameChange}
                 />
-                富平县金翁农业科技有限公司 出库单
-              </span>
-            </th>
-          </tr>
-
-          <tr
+                <Typography.Link
+                  onClick={addProductItem}
+                  style={{
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  <PlusOutlined /> 添加商品
+                </Typography.Link>
+              </Space>
+            </div>
+          }
+          bordered
+          dataSource={product}
+          renderItem={(item, index) => (
+            <List.Item
+              key={index}
+              actions={[
+                <a
+                  key="list-loadmore-edit"
+                  onClick={() => {
+                    destroyProductName(product[index]).then(() => {
+                      fetchProductData()
+                    })
+                  }}
+                >
+                  删除
+                </a>
+              ]}
+            >
+              {item.name}
+            </List.Item>
+          )}
+        />
+      </div>
+      <div>
+        <div style={{ textAlign: 'right' }}>
+          <Button
             style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
+              margin: '0 30px'
             }}
+            type="primary"
+            onClick={() => exportPDF('测试导出PDF', exportDom.current)}
           >
-            <td width="150" colSpan="1" align="center">
-              发货仓库
-            </td>
-            <td width="450" colSpan="4" align="center">
-              <Select
-                defaultValue={warehouse[0]?.name || ''}
+            导出PDF
+          </Button>
+        </div>
+        <div
+          ref={exportDom}
+          style={{
+            // width: '90%',
+            padding: 40,
+            boxSizing: 'border-box',
+            margin: '0 auto',
+            lineHeight: '40px',
+            fontSize: 15,
+            overflow: 'hidden'
+          }}
+        >
+          <table
+            //   height="30%"
+            // cellPadding="10"
+            // cellSpacing="10"
+            border="1"
+            align="center"
+          >
+            <tr align="center">
+              <th
                 style={{
-                  width: 120
+                  position: 'relative'
                 }}
-                bordered={false}
-                options={warehouse.map((item) => ({
-                  value: item.name,
-                  label: item.name
-                }))}
-              />
-            </td>
-            <td width="150" colSpan="1" align="center">
-              录单日期
-            </td>
-            <td width="450" colSpan="4" align="center">
-              <DatePicker bordered={false} />
-            </td>
-            <td width="150" colSpan="1" align="center">
-              单据编号
-            </td>
-            <td width="450" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              客户名称
-            </td>
-            <td width="450" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-            <td width="150" colSpan="1" align="center">
-              接货联系人
-            </td>
-            <td width="450" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-            <td width="150" colSpan="1" align="center">
-              接货联系电话
-            </td>
-            <td width="450" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              送货地址
-            </td>
-            <td width="150" contentEditable="true" colSpan="14" align="center">
-              ....
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              序号
-            </td>
-            <td width="450" colSpan="4" align="center">
-              商品全称
-            </td>
-            <td width="150" colSpan="1" align="center">
-              单位
-            </td>
-            <td width="150" colSpan="2" align="center">
-              数量
-            </td>
-            <td width="150" colSpan="2" align="center">
-              单价
-            </td>
-            <td width="150" colSpan="2" align="center">
-              金额
-            </td>
-            <td width="450" colSpan="3" align="center">
-              备注
-            </td>
-          </tr>
-          {typeArr.map((item, index) => (
-            <tr key={index}>
+                colSpan="16"
+                bgcolor="lightgray"
+              >
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontSize: '20px',
+                    lineHeight: '55px',
+                    fontFamily: 'serif'
+                  }}
+                >
+                  <img
+                    alt="ll"
+                    src={'/images/logo.png'}
+                    style={{
+                      width: '230px',
+                      height: '80px',
+                      position: 'absolute',
+                      left: 0
+                    }}
+                  />
+                  富平县金翁农业科技有限公司 出库单
+                </span>
+              </th>
+            </tr>
+
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
               <td width="150" colSpan="1" align="center">
-                {index + 1}
+                发货仓库
               </td>
-              <td
-                width="450"
-                contentEditable="true"
-                colSpan="4"
-                align="center"
-              ></td>
-              <td width="150" colSpan="1" align="center">
+              <td width="450" colSpan="4" align="center">
                 <Select
-                  defaultValue="箱"
+                  defaultValue={warehouse[0]?.name || ''}
                   style={{
                     width: 120
                   }}
                   bordered={false}
+                  options={warehouse.map((item) => ({
+                    value: item.name,
+                    label: item.name
+                  }))}
+                />
+              </td>
+              <td width="150" colSpan="1" align="center">
+                录单日期
+              </td>
+              <td width="450" colSpan="4" align="center">
+                <DatePicker
+                  defaultValue={moment('2015-06-06', 'YYYY-MM-DD')}
+                  style={{ padding: 0 }}
+                  bordered={false}
+                />
+              </td>
+              <td width="150" colSpan="1" align="center">
+                单据编号
+              </td>
+              <td width="450" contentEditable="true" colSpan="4" align="center">
+                ....
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                客户名称
+              </td>
+              <td width="450" contentEditable="true" colSpan="4" align="center">
+                ....
+              </td>
+              <td width="150" colSpan="1" align="center">
+                接货联系人
+              </td>
+              <td width="450" contentEditable="true" colSpan="4" align="center">
+                ....
+              </td>
+              <td width="150" colSpan="1" align="center">
+                接货联系电话
+              </td>
+              <td width="450" contentEditable="true" colSpan="4" align="center">
+                ....
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                送货地址
+              </td>
+              <td
+                width="150"
+                contentEditable="true"
+                colSpan="14"
+                align="center"
+              >
+                ....
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                序号
+              </td>
+              <td width="450" colSpan="4" align="center">
+                商品全称
+              </td>
+              <td width="150" colSpan="1" align="center">
+                单位
+              </td>
+              <td width="150" colSpan="2" align="center">
+                数量
+              </td>
+              <td width="150" colSpan="2" align="center">
+                单价
+              </td>
+              <td width="150" colSpan="2" align="center">
+                金额
+              </td>
+              <td width="450" colSpan="3" align="center">
+                备注
+              </td>
+            </tr>
+            {typeArr.map((item, index) => (
+              <tr key={index}>
+                <td width="150" colSpan="1" align="center">
+                  {index + 1}
+                </td>
+                <td
+                  width="450"
+                  contentEditable="true"
+                  colSpan="4"
+                  align="center"
+                >
+                  <Select
+                    // defaultValue={product[0]?.name || ''}
+                    style={{
+                      width: 120
+                    }}
+                    bordered={false}
+                    options={product.map((item) => ({
+                      value: item.name,
+                      label: item.name
+                    }))}
+                  />
+                </td>
+                <td width="150" colSpan="1" align="center">
+                  <Select
+                    defaultValue="箱"
+                    style={{
+                      width: 120
+                    }}
+                    bordered={false}
+                    options={[
+                      {
+                        value: '箱',
+                        label: '箱'
+                      },
+                      {
+                        value: '盒',
+                        label: '盒'
+                      },
+                      {
+                        value: '斤',
+                        label: '斤'
+                      }
+                    ]}
+                  />
+                </td>
+                <td
+                  width="150"
+                  colSpan="2"
+                  contentEditable="true"
+                  align="center"
+                  onBlur={(e) => change(e, index, 'num')}
+                ></td>
+                <td
+                  width="150"
+                  contentEditable="true"
+                  colSpan="2"
+                  align="center"
+                  onBlur={(e) => change(e, index, 'price')}
+                ></td>
+                <td width="150" colSpan="2" align="center">
+                  {(typeArr[index]?.price || 0) * (typeArr[index]?.num || 0)}
+                </td>
+                <td
+                  width="450"
+                  contentEditable="true"
+                  colSpan="3"
+                  align="center"
+                ></td>
+              </tr>
+            ))}
+            <tr id="printHide" align="center">
+              <th colSpan="16">
+                <span
+                  style={{
+                    color: '#f8c81a',
+                    border: '13px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                  onClick={() => {
+                    setTypeArr([...typeArr, {}])
+                  }}
+                >
+                  + 添加商品
+                </span>
+              </th>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                合计金额
+              </td>
+              <td width="150" colSpan="14" align="center">
+                {cost}元
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                总计大写
+              </td>
+              <td width="150" colSpan="14" align="center">
+                {ToString(cost)}
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                收款账户
+              </td>
+              <td style={{ padding: '0 10px' }} width="150" colSpan="14">
+                单位名称：富平县金翁农业科技有限公司
+                <br />
+                开户行：
+                <Select
+                  defaultValue="中国农业银行富平县支行"
+                  style={
+                    {
+                      // width: 120
+                    }
+                  }
+                  bordered={false}
                   options={[
                     {
-                      value: '箱',
-                      label: '箱'
+                      value: '中国农业银行富平县支行',
+                      label: '中国农业银行富平县支行'
                     },
                     {
-                      value: '盒',
-                      label: '盒'
+                      value: '中国银行西安高新科技支行',
+                      label: '中国银行西安高新科技支行'
+                    }
+                  ]}
+                />
+                <br />
+                开户账号：
+                <Select
+                  defaultValue="26555101040019890"
+                  style={
+                    {
+                      // width: 120
+                    }
+                  }
+                  bordered={false}
+                  options={[
+                    {
+                      value: '26555101040019890',
+                      label: '26555101040019890'
                     },
                     {
-                      value: '斤',
-                      label: '斤'
+                      value: '6217853600041222851',
+                      label: '6217853600041222851'
                     }
                   ]}
                 />
               </td>
-              <td
-                width="150"
-                colSpan="2"
-                contentEditable="true"
-                align="center"
-                onBlur={(e) => change(e, index, 'num')}
-              ></td>
-              <td
-                width="150"
-                contentEditable="true"
-                colSpan="2"
-                align="center"
-                onBlur={(e) => change(e, index, 'price')}
-              ></td>
-              <td width="150" colSpan="2" align="center">
-                {(typeArr[index]?.price || 0) * (typeArr[index]?.num || 0)}
-              </td>
-              <td
-                width="450"
-                contentEditable="true"
-                colSpan="3"
-                align="center"
-              ></td>
             </tr>
-          ))}
-          <tr id="printHide" align="center">
-            <th colSpan="16">
-              <span
-                style={{
-                  color: '#f8c81a',
-                  border: '13px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
-                onClick={() => {
-                  setTypeArr([...typeArr, {}])
-                }}
-              >
-                + 添加商品
-              </span>
-            </th>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              合计金额
-            </td>
-            <td width="150" colSpan="14" align="center">
-              {cost}元
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              总计大写
-            </td>
-            <td width="150" colSpan="14" align="center">
-              {ToString(cost)}
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              公司收款账户
-            </td>
-            <td width="150" colSpan="14">
-              单位名称：富平县金翁农业科技有限公司
-              <br />
-              开户行，中国农业银行富平县支行
-              <br />
-              开户账号，26555101040019890
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              开票及公司邮箱
-            </td>
-            <td width="150" colSpan="14">
-              yangyifan@jwny.partner.onmschina.cn（请将送货单照片和开票信息发邮箱）
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              公司联系电话及地址
-            </td>
-            <td width="150" colSpan="14">
-              15829000737/陕西省渭南市富平县曹村镇太白村一组
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              公司官网
-            </td>
-            <td width="150" colSpan="14">
-              JWNY.xyz
-            </td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              lineHeight: '70px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              收货人签字
-            </td>
-            <td width="150" contentEditable="true" colSpan="14"></td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: '500',
-              fontSize: '13px',
-              fontWeight: '500'
-            }}
-          >
-            <td width="150" colSpan="1" align="center">
-              制表人（签字）
-            </td>
-            <td width="150" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-            <td width="150" colSpan="1" align="center">
-              库管（签字）
-            </td>
-            <td width="150" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-            <td width="150" colSpan="1" align="center">
-              财务（签字）
-            </td>
-            <td width="150" contentEditable="true" colSpan="4" align="center">
-              ....
-            </td>
-          </tr>
-        </table>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500',
+                lineHeight: '55px'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                开票及公司邮箱
+              </td>
+              <td style={{ padding: '0 10px' }} colSpan="14">
+                yangyifan@jwny.partner.onmschina.cn（请将送货单照片和开票信息发邮箱）
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                fontWeight: '500',
+                lineHeight: '55px'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                联系电话及地址
+              </td>
+              <td style={{ padding: '0 10px' }} colSpan="14">
+                15829000737 / 陕西省渭南市富平县曹村镇太白村一组
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '55px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                公司官网
+              </td>
+              <td style={{ padding: '0 10px' }} colSpan="14">
+                JWNY.xyz
+              </td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '80px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                收货人签字
+              </td>
+              <td width="150" contentEditable="true" colSpan="14"></td>
+            </tr>
+            <tr
+              style={{
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '55px',
+                fontWeight: '500'
+              }}
+            >
+              <td width="150" colSpan="1" align="center">
+                制表人（签字）
+              </td>
+              <td width="150" contentEditable="true" colSpan="4" align="center">
+                <Select
+                  defaultValue="米佳乐"
+                  bordered={false}
+                  options={[
+                    {
+                      value: '米佳乐',
+                      label: '米佳乐'
+                    },
+                    {
+                      value: '贺海燕',
+                      label: '贺海燕'
+                    },
+                    {
+                      value: '杨一凡',
+                      label: '杨一凡'
+                    },
+                    {
+                      value: '石喆',
+                      label: '石喆'
+                    }
+                  ]}
+                />
+              </td>
+              <td width="150" colSpan="1" align="center">
+                库管（签字）
+              </td>
+              <td width="150" contentEditable="true" colSpan="4" align="center">
+                <Select
+                  defaultValue="石喆"
+                  bordered={false}
+                  options={[
+                    {
+                      value: '石喆',
+                      label: '石喆'
+                    },
+                    {
+                      value: '秦晓军',
+                      label: '秦晓军'
+                    },
+                    {
+                      value: '王宝亮',
+                      label: '王宝亮'
+                    }
+                  ]}
+                />
+              </td>
+              <td width="150" colSpan="1" align="center">
+                财务（签字）
+              </td>
+              <td width="150" contentEditable="true" colSpan="4" align="center">
+                <Select
+                  defaultValue="贺海燕"
+                  bordered={false}
+                  options={[
+                    {
+                      value: '贺海燕',
+                      label: '贺海燕'
+                    },
+                    {
+                      value: '杨一凡',
+                      label: '杨一凡'
+                    }
+                  ]}
+                />
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   )

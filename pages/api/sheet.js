@@ -5,7 +5,6 @@ const fetchWarehouse = async () => {
   const Warehouse = new AV.Query('Warehouse')
   try {
     const data = await Warehouse.find()
-    // console.log(111, data, data.toJSON())
     const records = data.reverse().map((x) => {
       const json = x.toJSON()
       return json
@@ -36,4 +35,46 @@ const destroyWarehouse = async (val) => {
     console.log(e)
   }
 }
-export { addWarehouse, fetchWarehouse, destroyWarehouse }
+
+const fetchProductName = async () => {
+  const ProductName = new AV.Query('ProductName')
+  try {
+    const data = await ProductName.find()
+    const records = data.reverse().map((x) => {
+      const json = x.toJSON()
+      return json
+    })
+    return records
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const addProductName = async (val) => {
+  const ProductName = AV.Object.extend('ProductName')
+  const productName = new ProductName()
+  try {
+    productName.set('name', val)
+    const res = await productName.save()
+    return res.toJSON()
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const destroyProductName = async (val) => {
+  try {
+    const productName = AV.Object.createWithoutData('ProductName', val.objectId)
+    productName.destroy()
+  } catch (e) {
+    console.log(e)
+  }
+}
+export {
+  addWarehouse,
+  fetchWarehouse,
+  destroyWarehouse,
+  fetchProductName,
+  addProductName,
+  destroyProductName
+}

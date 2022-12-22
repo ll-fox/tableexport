@@ -29,7 +29,7 @@ const Capital = () => {
   }
 
   return (
-    <App tab={'capital'}>
+    <App tab={'template'}>
       <Tabs onChange={onChange} type="card">
         <TabPane tab="出库单" key="4">
           <OutboundSheet />
