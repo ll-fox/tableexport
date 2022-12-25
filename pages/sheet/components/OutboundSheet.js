@@ -8,7 +8,8 @@ import {
   Typography,
   Input,
   Space,
-  Spin
+  Spin,
+  message
 } from 'antd'
 import {
   addWarehouse,
@@ -16,9 +17,11 @@ import {
   destroyWarehouse,
   fetchProductName,
   addProductName,
-  destroyProductName
+  destroyProductName,
+  addOutTemplateInfo
 } from '../../api/sheet'
 import moment from 'moment'
+import { pinyin } from 'pinyin-pro'
 
 import { PlusOutlined } from '@ant-design/icons'
 
@@ -36,12 +39,19 @@ const getBase64 = (file) =>
 
     reader.onerror = (error) => reject(error)
   })
+
+const account = {
+    '中国农业银行富平县支行': 26555101040019890,
+    '中国银行西安高新科技支行': 6217853600041222851
+  }
 export default function OutboundSheet() {
   const exportDom = useRef(null)
   const [previewOpen, setPreviewOpen] = useState(true)
   const [previewImage, setPreviewImage] = useState('')
   const [previewTitle, setPreviewTitle] = useState('')
-  const [fileList, setFileList] = useState([])
+  const [data, setData] = useState({
+    account: '中国农业银行富平县支行'
+  })
   const [typeArr, setTypeArr] = useState([])
   const [cost, setCost] = useState(0)
   const [warehouse,setWarehouse] = useState([])
@@ -49,6 +59,9 @@ export default function OutboundSheet() {
   const [name, setName] = useState('')
   const [productName, setProductName] = useState('')
   const [loading, setLoading] = useState(false)
+  const [customer, setCustomer] = useState('')
+  const [outboundID, setOutboundID] = useState('')
+  const [accountID, setAccountID] = useState('')
 
 
   useEffect(() => {
@@ -112,8 +125,25 @@ export default function OutboundSheet() {
     )
   }
 
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList)
+  const handleChange = (val,type) => {
+    const newData = data;
+    newData[type] = val;
+    setData(() => newData)
+    if(type === 'account'){
+      setAccountID(account[val])
+    }
+    console.log(123, val, type)
+  }
   const handleCancel = () => setPreviewOpen(false)
+
+  const changeCustomer = (e) => {
+    setCustomer(String(e.target.textContent))
+    setOutboundID(`${pinyin(String(e?.target?.textContent || ''), {
+      pattern: 'first'
+    }).replace(' ', '')}${moment().format('YYYYMMDD')}${Math.floor(
+      Math.random() * 1000 + 1
+    )} `)
+  }
 
   const change = (e, index, type) => {
     let obj = typeArr[index] || {}
@@ -122,10 +152,34 @@ export default function OutboundSheet() {
     let Arr = typeArr.concat()
     Arr[index] = obj
     setTypeArr(Arr)
-    typeArr.forEach(item=>{
-        result += (item.price || 0) * (item.num || 0)
+    typeArr.forEach((item) => {
+      result += (item.price || 0) * (item.num || 0)
     })
     setCost(result)
+  }
+
+  const saveTable = ()=>{
+    let val = {}
+    val.date = moment().format('YYYY-MM-DD')
+    val.customer = customer
+    val.id = outboundID
+    val.cost = cost
+    val = Object.assign(val, data)
+    if (!customer) {
+      message.error('请输入客户名称！')
+      return
+    } else if (!data.warehouse) {
+      message.error('请输入仓库名称！')
+      return
+    } else if (!cost) {
+      message.error('请输完整商品规格！')
+      return
+    }
+    setLoading(true)
+
+    addOutTemplateInfo(val).then(()=>{
+      setLoading(false)
+    })
   }
   const ToString = (n) =>{
     if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(n)){
@@ -261,7 +315,7 @@ export default function OutboundSheet() {
                     onClick={() => {
                       destroyProductName(product[index]).then(() => {
                         product.splice(index, 1)
-                        setWarehouse([...product])
+                        setProduct([...product])
                       })
                     }}
                   >
@@ -276,6 +330,15 @@ export default function OutboundSheet() {
         </div>
         <div>
           <div style={{ textAlign: 'right' }}>
+            <Button
+              style={{
+                margin: '0 30px'
+              }}
+              type="primary"
+              onClick={() => saveTable()}
+            >
+              保存表格信息
+            </Button>
             <Button
               style={{
                 margin: '0 30px'
@@ -354,6 +417,7 @@ export default function OutboundSheet() {
                     style={{
                       minWidth: 120
                     }}
+                    onChange={(val) => handleChange(val, 'warehouse')}
                     bordered={false}
                     options={warehouse.map((item) => ({
                       value: item.name,
@@ -367,7 +431,7 @@ export default function OutboundSheet() {
                 <td width="450" colSpan="4" align="center">
                   <DatePicker
                     width={100}
-                    defaultValue={moment('2015-06-06', 'YYYY-MM-DD')}
+                    defaultValue={moment()}
                     style={{ padding: 0, minWidth: 110 }}
                     bordered={false}
                   />
@@ -375,13 +439,11 @@ export default function OutboundSheet() {
                 <td width="150" colSpan="1" align="center">
                   单据编号
                 </td>
-                <td
-                  width="450"
-                  contentEditable="true"
-                  colSpan="4"
-                  align="center"
-                >
-                  ....
+                <td width="450" colSpan="4" align="center">
+                  {outboundID ||
+                    `${moment().format('YYYYMMDD')}${Math.floor(
+                      Math.random() * 1000 + 1
+                    )}`}
                 </td>
               </tr>
               <tr
@@ -399,9 +461,8 @@ export default function OutboundSheet() {
                   contentEditable="true"
                   colSpan="4"
                   align="center"
-                >
-                  ....
-                </td>
+                  onBlur={(e) => changeCustomer(e)}
+                ></td>
                 <td width="150" colSpan="1" align="center">
                   接货联系人
                 </td>
@@ -410,9 +471,7 @@ export default function OutboundSheet() {
                   contentEditable="true"
                   colSpan="4"
                   align="center"
-                >
-                  ....
-                </td>
+                ></td>
                 <td width="150" colSpan="1" align="center">
                   接货联系电话
                 </td>
@@ -421,9 +480,7 @@ export default function OutboundSheet() {
                   contentEditable="true"
                   colSpan="4"
                   align="center"
-                >
-                  ....
-                </td>
+                ></td>
               </tr>
               <tr
                 style={{
@@ -440,9 +497,7 @@ export default function OutboundSheet() {
                   contentEditable="true"
                   colSpan="14"
                   align="center"
-                >
-                  ....
-                </td>
+                ></td>
               </tr>
               <tr
                 style={{
@@ -615,6 +670,7 @@ export default function OutboundSheet() {
                         // width: 120
                       }
                     }
+                    onChange={(val) => handleChange(val, 'account')}
                     bordered={false}
                     options={[
                       {
@@ -628,26 +684,7 @@ export default function OutboundSheet() {
                     ]}
                   />
                   <br />
-                  开户账号：
-                  <Select
-                    defaultValue="26555101040019890"
-                    style={
-                      {
-                        // width: 120
-                      }
-                    }
-                    bordered={false}
-                    options={[
-                      {
-                        value: '26555101040019890',
-                        label: '26555101040019890'
-                      },
-                      {
-                        value: '6217853600041222851',
-                        label: '6217853600041222851'
-                      }
-                    ]}
-                  />
+                  开户账号： {accountID || 26555101040019890}
                 </td>
               </tr>
               <tr

@@ -12,6 +12,8 @@ import {
 import { exportPDF } from '../../public/static/exportPDF'
 import App from '../components/Layout/index'
 import ExpressageCapital from './components/ExpressageCapital'
+import OutboundCapital from './components/OutboundCapital'
+
 // import style from './index.module.css'
 
 const { TabPane } = Tabs
@@ -34,8 +36,8 @@ const Capital = () => {
         <TabPane tab="快递单号费用" key="1">
           <ExpressageCapital />
         </TabPane>
-        <TabPane tab="产品收购费用" key="4">
-          产品收购费用
+        <TabPane tab="出库费用" key="4">
+          <OutboundCapital />
         </TabPane>
         <TabPane tab="人工费用" key="3">
           人工费用

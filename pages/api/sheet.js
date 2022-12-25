@@ -70,11 +70,41 @@ const destroyProductName = async (val) => {
     console.log(e)
   }
 }
+
+const addOutTemplateInfo = async (val) => {
+  const OutTemplate = AV.Object.extend('OutTemplates')
+  const outTemplate = new OutTemplate()
+  try {
+    outTemplate.set(val)
+    const res = await outTemplate.save()
+    console.log(1111, res.toJSON())
+    return res.toJSON()
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const fetchOutTemplateInfo = async () => {
+  const OutTemplate = new AV.Query('OutTemplates')
+  try {
+    const data = await OutTemplate.find()
+    const records = data.reverse().map((x) => {
+      const json = x.toJSON()
+      return json
+    })
+    return records
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export {
   addWarehouse,
   fetchWarehouse,
   destroyWarehouse,
   fetchProductName,
   addProductName,
-  destroyProductName
+  destroyProductName,
+  addOutTemplateInfo,
+  fetchOutTemplateInfo
 }
