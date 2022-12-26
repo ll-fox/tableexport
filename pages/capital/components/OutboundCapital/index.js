@@ -25,13 +25,13 @@ const ExpressageCapital = () => {
       title: '日期',
       dataIndex: 'date',
       key: 'date',
-      width: 130,
+      width: 130
     },
     {
       title: '单据编号',
       dataIndex: 'id',
       key: 'id',
-      width: 130,
+      width: 130
     },
     {
       title: '发货仓库',
@@ -44,6 +44,12 @@ const ExpressageCapital = () => {
       dataIndex: 'customer',
       width: 130,
       key: 'customer'
+    },
+    {
+      title: '总重量',
+      dataIndex: 'weight',
+      width: 130,
+      key: 'weight'
     },
     {
       title: '合计金额',
@@ -59,16 +65,13 @@ const ExpressageCapital = () => {
     }
   ]
 
-  const onChange = (pagination, filters, sorter, extra) => {
-    setChangeData(extra.currentDataSource)
-  }
-
   const exportTable = () => {
     let sheetFilter = [
       'date',
       'id',
       'warehouse',
       'customer',
+      'weight',
       'cost',
       'account',
     ]
@@ -76,7 +79,7 @@ const ExpressageCapital = () => {
     option.fileName = '出库信息表'
     option.datas = [
       {
-        sheetData: changeData,
+        sheetData: data,
         sheetName: '出库信息表',
         sheetFilter: sheetFilter,
         sheetHeader: [
@@ -84,10 +87,11 @@ const ExpressageCapital = () => {
           '单据编号',
           '发货仓库',
           '客户名称',
+          '总重量',
           '合计金额',
-          '收款账号',
+          '收款账号'
         ],
-        columnWidths: [10, 10, 10, 10, 10, 10]
+        columnWidths: [10, 10, 10, 10, 10, 10,20]
       }
     ]
     const toExcel = new ExportJsonExcel(option) //new
@@ -96,14 +100,14 @@ const ExpressageCapital = () => {
 
   return (
     <div>
-      {/* <div className={style.top}>
-        <Button type="primary" onClick={() => showModal({})}>
+      <div>
+        {/* <Button type="primary" onClick={() => showModal({})}>
           新增+
-        </Button>
+        </Button> */}
         <Button type="primary" onClick={exportTable} danger ghost>
           导出
         </Button>
-      </div> */}
+      </div>
       <Table
         loading={loading}
         columns={columns}

@@ -41,19 +41,26 @@ const getBase64 = (file) =>
   })
 
 const account = {
-    '中国农业银行富平县支行': 26555101040019890,
-    '中国银行西安高新科技支行': 6217853600041222851
+  '富平县金翁农业科技有限公司': {
+    bank: '中国农业银行富平县支行',
+    bankId: '26555101040019890'
+  },
+  '杨一凡': {
+    bank: '中国银行西安高新科技支行',
+    bankId: '6217853600041222851'
   }
+}
 export default function OutboundSheet() {
   const exportDom = useRef(null)
   const [previewOpen, setPreviewOpen] = useState(true)
   const [previewImage, setPreviewImage] = useState('')
   const [previewTitle, setPreviewTitle] = useState('')
   const [data, setData] = useState({
-    account: '中国农业银行富平县支行'
+    account: '富平县金翁农业科技有限公司'
   })
   const [typeArr, setTypeArr] = useState([])
   const [cost, setCost] = useState(0)
+  const [weight, setWeight] = useState(0)
   const [warehouse,setWarehouse] = useState([])
   const [product, setProduct] = useState([])
   const [name, setName] = useState('')
@@ -61,7 +68,10 @@ export default function OutboundSheet() {
   const [loading, setLoading] = useState(false)
   const [customer, setCustomer] = useState('')
   const [outboundID, setOutboundID] = useState('')
-  const [accountID, setAccountID] = useState('')
+  const [accountInfo, setAccountInfo] = useState({
+    bank: '中国农业银行富平县支行',
+    bankId: '26555101040019890'
+  })
 
 
   useEffect(() => {
@@ -89,19 +99,23 @@ export default function OutboundSheet() {
   const addItem = (e) => {
     e.preventDefault()
     if (name) {
-      addWarehouse(name)
-      setName('')
-      setProductName('')
-      fetchData()
+      addWarehouse(name).then(()=>{
+        setName('')
+        fetchData()
+      })
     }
   }
 
   const addProductItem = (e) => {
     e.preventDefault()
     if (productName) {
-      addProductName(productName)
-      setProductName('')
-      fetchProductData()
+      addProductName(productName).then(
+        ()=>{
+          setProductName('')
+          fetchProductData()
+        }
+      )
+      
     }
   }
 
@@ -130,9 +144,8 @@ export default function OutboundSheet() {
     newData[type] = val;
     setData(() => newData)
     if(type === 'account'){
-      setAccountID(account[val])
+      setAccountInfo(account[val])
     }
-    console.log(123, val, type)
   }
   const handleCancel = () => setPreviewOpen(false)
 
@@ -148,13 +161,16 @@ export default function OutboundSheet() {
   const change = (e, index, type) => {
     let obj = typeArr[index] || {}
     let result = 0
+    let weight = 0
     obj[type] = Number(e.target.textContent)
     let Arr = typeArr.concat()
     Arr[index] = obj
     setTypeArr(Arr)
     typeArr.forEach((item) => {
       result += (item.price || 0) * (item.num || 0)
+      weight += item.weight
     })
+    setWeight(weight)
     setCost(result)
   }
 
@@ -164,6 +180,7 @@ export default function OutboundSheet() {
     val.customer = customer
     val.id = outboundID
     val.cost = cost
+    val.weight = weight
     val = Object.assign(val, data)
     if (!customer) {
       message.error('请输入客户名称！')
@@ -173,6 +190,9 @@ export default function OutboundSheet() {
       return
     } else if (!cost) {
       message.error('请输完整商品规格！')
+      return
+    } else if (!weight) {
+      message.error('请输完整商品重量！')
       return
     }
     setLoading(true)
@@ -367,6 +387,9 @@ export default function OutboundSheet() {
               // cellSpacing="10"
               border="1"
               align="center"
+              style={{
+                tableLayout: 'fixed'
+              }}
             >
               <tr align="center">
                 <th
@@ -521,10 +544,13 @@ export default function OutboundSheet() {
                 <td width="150" colSpan="2" align="center">
                   单价
                 </td>
-                <td width="150" colSpan="2" align="center">
+                <td width="150" colSpan="1" align="center">
                   金额
                 </td>
-                <td width="450" colSpan="3" align="center">
+                <td width="150" colSpan="2" align="center">
+                  重量
+                </td>
+                <td width="450" colSpan="2" align="center">
                   备注
                 </td>
               </tr>
@@ -551,12 +577,12 @@ export default function OutboundSheet() {
                       }))}
                     />
                   </td>
-                  <td width="150" colSpan="1" align="center">
+                  <td width="" colSpan="1" align="center">
                     <Select
                       defaultValue="箱"
                       style={
                         {
-                          //   width: 120
+                          // width: 80
                         }
                       }
                       bordered={false}
@@ -590,16 +616,26 @@ export default function OutboundSheet() {
                     align="center"
                     onBlur={(e) => change(e, index, 'price')}
                   ></td>
-                  <td width="150" colSpan="2" align="center">
+                  <td width="150" colSpan="1" align="center">
                     {(
                       (typeArr[index]?.price || 0) * (typeArr[index]?.num || 0)
-                    ).toFixed(0)}
+                    ).toFixed(2)}
                   </td>
+                  <td
+                    width="150"
+                    contentEditable="true"
+                    colSpan="2"
+                    align="center"
+                    onBlur={(e) => change(e, index, 'weight')}
+                  ></td>
                   <td
                     width="450"
                     contentEditable="true"
-                    colSpan="3"
+                    colSpan="2"
                     align="center"
+                    style={{
+                      lineHeight: 1
+                    }}
                   ></td>
                 </tr>
               ))}
@@ -632,7 +668,7 @@ export default function OutboundSheet() {
                   合计金额
                 </td>
                 <td width="150" colSpan="14" align="center">
-                  {cost.toFixed(0)}元
+                  {cost.toFixed(2)}元
                 </td>
               </tr>
               <tr
@@ -660,31 +696,29 @@ export default function OutboundSheet() {
                   收款账户
                 </td>
                 <td style={{ padding: '0 10px' }} width="150" colSpan="14">
-                  单位名称：富平县金翁农业科技有限公司
-                  <br />
-                  开户行：
+                  单位名称：
                   <Select
-                    defaultValue="中国农业银行富平县支行"
-                    style={
-                      {
-                        // width: 120
-                      }
-                    }
+                    defaultValue="富平县金翁农业科技有限公司"
+                    style={{
+                      minWidth: 200
+                    }}
                     onChange={(val) => handleChange(val, 'account')}
                     bordered={false}
                     options={[
                       {
-                        value: '中国农业银行富平县支行',
-                        label: '中国农业银行富平县支行'
+                        value: '富平县金翁农业科技有限公司',
+                        label: '富平县金翁农业科技有限公司'
                       },
                       {
-                        value: '中国银行西安高新科技支行',
-                        label: '中国银行西安高新科技支行'
+                        value: '杨一凡',
+                        label: '杨一凡'
                       }
                     ]}
                   />
                   <br />
-                  开户账号： {accountID || 26555101040019890}
+                  开户行：{accountInfo?.bank}
+                  <br />
+                  开户账号： {accountInfo?.bankId}
                 </td>
               </tr>
               <tr
