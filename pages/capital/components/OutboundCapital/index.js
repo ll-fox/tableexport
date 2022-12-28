@@ -1,24 +1,27 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Table, Input, Button, Space, Tooltip, Form, Image } from 'antd'
+import { Table, Input, Button, Modal } from 'antd'
 import ExportJsonExcel from 'js-export-excel'
-import { fetchOutTemplateInfo } from '../../../api/sheet'
+import {
+  fetchOutTemplateInfo,
+  destroyOutTemplateInfo
+} from '../../../api/sheet'
+const { confirm } = Modal
 
 const ExpressageCapital = () => {
   const [data, setData] = useState([])
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
-  const [changeData, setChangeData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [expressageList, setExpressageList] = useState([])
 
-  const searchInput = useRef(null)
   useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = () => {
     setLoading(true)
     fetchOutTemplateInfo().then((res) => {
-      setData(res)
+      setData([...res])
       setLoading(false)
     })
-  }, [])
+  }
 
   const columns = [
     {
@@ -62,8 +65,36 @@ const ExpressageCapital = () => {
       dataIndex: 'account',
       key: 'name',
       width: 150
+    },
+    {
+      title: '操作',
+      dataIndex: 'operate',
+      key: 'operate',
+      width: 150,
+      render: (_, re) => {
+        return(
+        <a
+          onClick={() => {
+            console.log(1333, re)
+            Modal.confirm({
+              title: '删除',
+              content: '是否确认删除？',
+              onOk: () => {
+                setLoading(true)
+                destroyOutTemplateInfo(re).then(()=>{
+                    fetchData()
+                })
+              },
+              onCancel() {}
+            })
+          }}
+        >
+          删除
+        </a>
+      )}
     }
   ]
+
 
   const exportTable = () => {
     let sheetFilter = [

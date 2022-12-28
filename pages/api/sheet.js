@@ -98,6 +98,19 @@ const fetchOutTemplateInfo = async () => {
   }
 }
 
+const destroyOutTemplateInfo = async (val) => {
+  try {
+    const OutTemplate = AV.Object.createWithoutData(
+      'OutTemplates',
+      val.objectId
+    )
+    const res = await OutTemplate.destroy()
+    return res.toJSON()
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export {
   addWarehouse,
   fetchWarehouse,
@@ -106,5 +119,6 @@ export {
   addProductName,
   destroyProductName,
   addOutTemplateInfo,
-  fetchOutTemplateInfo
+  fetchOutTemplateInfo,
+  destroyOutTemplateInfo
 }
