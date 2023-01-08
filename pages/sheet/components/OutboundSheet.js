@@ -598,6 +598,14 @@ export default function OutboundSheet() {
                         {
                           value: '斤',
                           label: '斤'
+                        },
+                        {
+                          value: '筐',
+                          label: '筐'
+                        },
+                        {
+                          value: '个',
+                          label: '个'
                         }
                       ]}
                     />
