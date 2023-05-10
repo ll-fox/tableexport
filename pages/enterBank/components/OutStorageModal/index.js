@@ -8,17 +8,18 @@ import {
   message,
   Select,
   Upload,
-  Button
+  Button,
+  Radio
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 const AV = require('leancloud-storage')
 import 'moment/locale/zh-cn'
 import {
-  updateMaterialStorage,
-  addMaterialStorage
-} from '../../../api/materialStorage'
+  updateOutStorage,
+  addOutStorage
+} from '../../../api/outStorage'
 import moment from 'moment'
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty, find, filter } from 'lodash'
 const { Option } = Select
 const { TextArea } = Input
 const config = {
@@ -31,6 +32,8 @@ const config = {
   ]
 }
 
+const channel = [{ name: '抖音' }, { name: '淘宝' }, { name: '拼多多' }]
+
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -41,7 +44,7 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error)
   })
 
-const MaterialStorageModal = (props) => {
+const OutStorageModal = (props) => {
   const [form] = Form.useForm()
   const {
     handleFinish,
@@ -49,12 +52,13 @@ const MaterialStorageModal = (props) => {
     isModalVisible,
     data,
     items,
+    productList,
     selectProject
   } = props
   let newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
-    newData.material = newData.material.map((item, index) => {
+    newData.material = newData?.material?.map((item, index) => {
       return {
         uid: index,
         name: 'image.png',
@@ -68,15 +72,26 @@ const MaterialStorageModal = (props) => {
   const [isDsable, setIsDsable] = useState(false)
   const [fileList, setFileList] = useState(newData?.material || [])
   const [loading, setLoading] = useState(false)
+  const [showPlatform, setShowPlatform] = useState(data?.platform || false)
+  const [showProduct, setShowProduct] = useState(data?.product || false)
+  const [showOffline, setShowOffline] = useState(data?.customerName || false)
+  const [platformList, setPlatformList] = useState(items || [])
+  const [products, setProducts] = useState(productList || [])
 
   const onFinish = () => {
     form.validateFields().then((values) => {
       setLoading(true)
+      values.projectId = selectProject
       values.date = values.date.format('YYYY-MM-DD')
-      values.material = values.material.map((item) => item.url)
+      values.material = values.material?.map((item) => item.url)
+      const specification = find(productList, {
+        produceName: values.product
+      })?.specification
+      if (values.channel !== '线下' && specification) {
+        values.weight = Number(values.amount) * Number(specification)
+      }
       if (isEmpty(data)) {
-        values.projectId = selectProject
-        addMaterialStorage(values).then((res) => {
+        addOutStorage(values).then((res) => {
           if (res) {
             setLoading(false)
             message.success('保存成功！')
@@ -88,7 +103,7 @@ const MaterialStorageModal = (props) => {
           }
         })
       } else {
-        updateMaterialStorage(values, data.objectId).then((res) => {
+        updateOutStorage(values, data.objectId).then((res) => {
           if (res) {
             setLoading(false)
             message.success('修改成功！')
@@ -139,10 +154,30 @@ const MaterialStorageModal = (props) => {
     )
   }
 
+  const handleChannelChange = (e) => {
+    form.setFieldsValue({platform:''})
+    if (e.target.value === '线下') {
+      setShowOffline(true)
+      setShowPlatform(false)
+    } else {
+      setShowPlatform(true)
+      setShowOffline(false)
+      setPlatformList(e.target.value === '平台' ? items : channel)
+    }
+  }
+
+  const handlePlatformChange = (value) => {
+    form.setFieldsValue({
+      product: ''
+    })
+    const platformProducts = filter(productList, { platform: value })
+    setProducts(platformProducts)
+    setShowProduct(true)
+  }
   return (
     isModalVisible && (
       <Modal
-        title="请填写商品信息"
+        title="请填写出库信息"
         visible={isModalVisible}
         onOk={onFinish}
         onCancel={handleCancel}
@@ -169,36 +204,104 @@ const MaterialStorageModal = (props) => {
           <Form.Item name="date" label="日期" {...config}>
             <DatePicker />
           </Form.Item>
-          {/* <Form.Item
-            name="name"
-            label="商品名称"
-            rules={[
-              {
-                type: 'string',
-                required: true,
-                message: '请输入商品名称!'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
           <Form.Item
-            name="supplierName"
-            label="供应商名称"
+            name="channel"
+            label="渠道"
             rules={[
               {
-                type: 'string',
                 required: true,
-                message: '请输入供应商名称!'
+                message: '请选择渠道!'
               }
             ]}
           >
-            <Select style={{ width: 250 }}>
-              {(items || []).map((item) => (
-                <Option key={item.name}>{item.name}</Option>
-              ))}
-            </Select>
-          </Form.Item> */}
+            <Radio.Group onChange={handleChannelChange}>
+              <Radio value="平台"> 平台 </Radio>
+              <Radio value="电商"> 电商 </Radio>
+              <Radio value="线下"> 线下 </Radio>
+            </Radio.Group>
+          </Form.Item>
+          {showPlatform && (
+            <Form.Item
+              name="platform"
+              label="平台名称"
+              rules={[
+                {
+                  required: true,
+                  message: '请选择平台名称!'
+                }
+              ]}
+            >
+              <Select style={{ width: 250 }} onChange={handlePlatformChange}>
+                {(platformList || []).map((item) => (
+                  <Option key={item.name}>{item.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
+          {
+            showPlatform &&
+              showProduct &&(
+              <Form.Item
+                name="product"
+                label="商品名称"
+                rules={[
+                  {
+                    required: true,
+                    message: '请选择商品名称!'
+                  }
+                ]}
+              >
+                <Select style={{ width: 250 }}>
+                  {(products || []).map((item) => (
+                    <Option key={item.produceName}>{item.produceName}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            )}
+          {showPlatform && (
+            <Form.Item
+              name="amount"
+              label="单数"
+              rules={[
+                {
+                  required: true,
+                  message: '请填写单数!'
+                }
+              ]}
+            >
+              <InputNumber addonAfter="单" min={0} />
+            </Form.Item>
+          )}
+          {showOffline && (
+            <Form.Item
+              name="customerName"
+              label="客户名称"
+              rules={[
+                {
+                  type: 'weight',
+                  required: true,
+                  message: '请输入客户名称!'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          )}
+          {showOffline && (
+            <Form.Item
+              name="weight"
+              label="出库重量"
+              rules={[
+                {
+                  type: 'weight',
+                  required: true,
+                  message: '请输入出库重量（斤）!'
+                }
+              ]}
+            >
+              <InputNumber addonAfter="斤" min={0} />
+            </Form.Item>
+          )}
           <Form.Item
             name="auditor"
             label="进库审核人"
@@ -214,19 +317,6 @@ const MaterialStorageModal = (props) => {
                 <Option key={name}>{name}</Option>
               ))}
             </Select>
-          </Form.Item>
-          <Form.Item
-            name="weight"
-            label="进库重量"
-            rules={[
-              {
-                type: 'weight',
-                required: true,
-                message: '请输入入库重量（斤）!'
-              }
-            ]}
-          >
-            <InputNumber addonAfter="斤" min={0} />
           </Form.Item>
           <Form.Item
             name="price"
@@ -280,13 +370,13 @@ const MaterialStorageModal = (props) => {
             label="证明材料"
             // valuePropName="fileList"
             getValueFromEvent={normFile}
-            rules={[
-              {
-                type: 'array',
-                required: true,
-                message: '请上传证明材料!'
-              }
-            ]}
+            // rules={[
+            //   {
+            //     type: 'array',
+            //     required: true,
+            //     message: '请上传证明材料!'
+            //   }
+            // ]}
           >
             <Upload
               listType="picture"
@@ -306,4 +396,4 @@ const MaterialStorageModal = (props) => {
   )
 }
 
-export default MaterialStorageModal
+export default OutStorageModal

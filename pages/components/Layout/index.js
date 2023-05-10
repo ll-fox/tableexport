@@ -2,16 +2,28 @@ import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import Images from 'next/image'
 import Link from 'next/link'
-import { Layout, Menu, Breadcrumb, ConfigProvider, Dropdown, Space } from 'antd'
-import { DownOutlined, UserOutlined } from '@ant-design/icons'
+import { Layout, Menu, Select, ConfigProvider, Dropdown, Space } from 'antd'
+import {
+  DownOutlined,
+  UserOutlined,
+  BarsOutlined,
+  BankOutlined,
+  BuildOutlined,
+  InsuranceOutlined,
+  MoneyCollectOutlined,
+  FileProtectOutlined,
+  BarChartOutlined
+} from '@ant-design/icons'
 import MyContext from '../../../lib/context'
+import { find } from 'lodash'
 import zhCN from 'antd/lib/locale/zh_CN'
 import { logOut } from '../../api/user'
-const { Header, Content, Footer } = Layout
+const { Header, Content, Footer, Sider } = Layout
 
 const App = (props = {}) => {
   const { children, tab } = props
-  const { user } = useContext(MyContext)
+  const { user, projects, setSelectProject, selectProject } =
+    useContext(MyContext)
   const router = useRouter()
   const menus = (
     <Menu>
@@ -30,30 +42,46 @@ const App = (props = {}) => {
   )
   const menu = [
     {
-      label: '进库详情',
+      label: <Link href="/">数据可视化</Link>,
+      icon: React.createElement(BarChartOutlined),
+      key: 'home'
+    },
+    {
+      label: <Link href="/project">项目管理</Link>,
+      icon: React.createElement(BarsOutlined),
+      key: 'project'
+    },
+    {
+      label: '进出库',
       key: 'enterBank',
+      icon: React.createElement(BankOutlined),
       children: [
         {
-          label: (
-            <Link href="/">
-              <a>商品进库</a>
-            </Link>
-          ),
-          key: 'home'
+          label: <Link href="/package">包装进库</Link>,
+          key: 'package'
         },
         {
           label: (
             <Link href="/enterBank/materialStorage">
-              <a>原料进库</a>
+              <a>商品进库</a>
             </Link>
           ),
           key: 'materialStorage'
+        },
+        {
+          label: (
+            <Link href="/enterBank/outStorage">
+              <a>商品出库</a>
+            </Link>
+          ),
+          key: 'outStorage'
         }
       ]
     },
     {
       label: '商品管理',
       key: 'productManagement',
+      icon: React.createElement(BuildOutlined),
       children: [
         {
           label: (
@@ -79,22 +107,25 @@ const App = (props = {}) => {
           <a>售后反馈</a>
         </Link>
       ),
+      icon: React.createElement(InsuranceOutlined),
       key: 'aftersales'
     },
-    {
-      label: (
-        <Link href="/orderForm">
-          <a>订单管理</a>
-        </Link>
-      ),
-      key: 'orderForm'
-    },
+    // {
+    //   label: (
+    //     <Link href="/orderForm">
+    //       <a>订单管理</a>
+    //     </Link>
+    //   ),
+    //   icon: React.createElement(UserOutlined),
+    //   key: 'orderForm'
+    // },
     {
       label: (
         <Link href="/capital">
           <a>财务支出</a>
         </Link>
       ),
+      icon: React.createElement(MoneyCollectOutlined),
       key: 'capital'
     },
     {
@@ -103,15 +134,22 @@ const App = (props = {}) => {
           <a>模版</a>
         </Link>
       ),
+      icon: React.createElement(FileProtectOutlined),
       key: 'template'
     }
   ]
+  const defaultSubMenu = find(menu, { children: [{ key: tab }] })
+  const onChange = (value) => {
+    setSelectProject(value)
+  }
+  const onSearch = (value) => {
+    console.log('search:', value)
+  }
   return (
     <ConfigProvider locale={zhCN}>
       <Layout style={{ height: '100vh' }}>
         <style jsx>{`
           .site-layout-content {
-            min-height: 100%;
             padding: 24px;
             background: #fff;
           }
@@ -136,8 +174,7 @@ const App = (props = {}) => {
         `}</style>
         <Header
           style={{
-            padding: '0 30px',
-            position: 'fixed',
+            padding: '0',
             width: '100%',
             zIndex: '999',
             display: 'flex',
@@ -154,13 +191,33 @@ const App = (props = {}) => {
               />
             </span>
           </div>
-          <Menu
-            // theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={[tab]}
-            items={menu}
-            style={{ borderBottom: '0' }}
-          />
+          <div
+            style={{
+              padding: '0 30px'
+            }}
+          >
+            <span>项目选择：</span>
+            <Select
+              showSearch
+              style={{
+                width: 300
+              }}
+              defaultValue={selectProject}
+              placeholder="请选择项目"
+              optionFilterProp="children"
+              onChange={onChange}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                (option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={(projects || []).map((item) => ({
+                value: item.objectId,
+                label: item.projectName
+              }))}
+            />
+          </div>
           <div
             style={{
               position: 'absolute',
@@ -178,24 +235,31 @@ const App = (props = {}) => {
             </Dropdown>
           </div>
         </Header>
-        <Content
-          style={{
-            padding: '0 30px',
-            marginTop: '60px',
-            overflow: 'scroll'
-          }}
-        >
-          <Breadcrumb
+        <Layout>
+          <Sider
             style={{
-              margin: '10px 0'
+              height: '100%',
+              background: 'rgba(255, 255, 255, 0.2)'
+            }}
+            width={200}
+            collapsible
+          >
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={[tab]}
+              defaultOpenKeys={[defaultSubMenu?.key]}
+              style={{ height: '100%', borderRight: 0 }}
+              items={menu}
+            />
+          </Sider>
+          <Content
+            style={{
+              padding: '20px'
             }}
           >
-            {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>出库详情</Breadcrumb.Item> */}
-          </Breadcrumb>
-          <div className="site-layout-content">{children}</div>
-        </Content>
-        <Footer
+            <div className="site-layout-content">{children}</div>
+          </Content>
+          {/* <Footer
           style={{
             padding: '5px 50px',
             textAlign: 'center'
@@ -205,7 +269,8 @@ const App = (props = {}) => {
           }}
         >
           Table Export ©2022 Created by LIULIN
-        </Footer>
+        </Footer> */}
+        </Layout>
       </Layout>
     </ConfigProvider>
   )

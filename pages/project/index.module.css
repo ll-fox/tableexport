@@ -1,0 +1,8 @@
+.top {
+  margin-bottom: 10px;
+  display: flex;
+  /* justify-content: flex-end; */
+}
+.ant-layout-sider-trigger{
+  background: #c49b45;
+}

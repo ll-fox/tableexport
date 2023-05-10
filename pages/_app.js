@@ -3,12 +3,15 @@ import MyContext from '../lib/context'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { currentUser } from './api/user'
+import { fetchProject} from './api/project'
 import '../styles/globals.css'
 import 'antd/dist/antd.css'
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   // 1. 创建 state ，保存用户信息
   const [user, setUser] = useState(null)
+  const [projects, setProjects] = useState(null)
+  const [selectProject, setSelectProject] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -19,6 +22,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
       } else {
         router.push('/login')
       }
+    })
+    fetchProject().then(res=>{
+      setProjects(res)
+      setSelectProject((res || [])[0]?.objectId)
     })
   }, [])
 
@@ -35,7 +42,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
       <MyContext.Provider
         value={{
           user: user,
-          setUser
+          projects: projects,
+          setUser,
+          selectProject,
+          setSelectProject
         }}
       >
         <Component {...pageProps} />

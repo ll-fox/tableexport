@@ -75,7 +75,6 @@ const ExpressageCapital = () => {
         return(
         <a
           onClick={() => {
-            console.log(1333, re)
             Modal.confirm({
               title: '删除',
               content: '是否确认删除？',

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect,useContext } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import {
   Table,
   Input,
@@ -7,49 +7,61 @@ import {
   Select,
   Typography,
   Divider,
-  List,
+  Tag,
+  Image,
+  Tooltip,
   Avatar
 } from 'antd'
-import MyContext from '../../lib/context'
-import { PlusOutlined } from '@ant-design/icons'
-import App from '../components/Layout/index'
+import {
+  PlusOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined
+} from '@ant-design/icons'
+import { find } from 'loadsh'
+import MyContext from '../../../lib/context'
+import App from '../../components/Layout/index'
 import { SearchOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
 import style from './index.module.css'
-import ProductModal from '../components/ProductModal'
-import { fetchProduct, fetchPlatform, addPlatform } from '../api/product'
-import { fetchPackage } from '../api/package'
+import OutStorageModal from '../components/OutStorageModal'
+import {
+  fetchOutStorage,
+} from '../../api/outStorage'
+import { fetchProduct, fetchPlatform } from '../../api/product'
+
 const { Option } = Select
-const Product = () => {
+const OutStorage = () => {
   const { selectProject } = useContext(MyContext)
   const [data, setData] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [itemData, setItemData] = useState({})
   const [loading, setLoading] = useState(false)
   const [items, setItems] = useState([])
-  const [packageList, setPackageList] = useState([])
+  const [productList, setProductList] = useState([])
   const [name, setName] = useState('')
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef(null)
   useEffect(() => {
     fetchPlat()
-    fetchData()
-    fetchPackage(selectProject).then((res) => {
-      setPackageList(res)
-    })
   }, [selectProject])
 
   const fetchPlat = () => {
+    setLoading(true)
     fetchPlatform().then((res) => {
-      res.push({ name: '所有平台' })
+      res.push({ name: '所有供应商' })
       setItems(res)
+      fetchData()
+      fetchProduct('', selectProject).then((res) => {
+        setProductList(res)
+        setLoading(false)
+      })
     })
   }
   const fetchData = (val) => {
-    val = val === '所有平台' ? '' : val
     setLoading(true)
-    fetchProduct(val || '', selectProject).then((res) => {
+    val = val === '所有供应商' ? '' : val
+    fetchOutStorage(val, selectProject).then((res) => {
       setData(res)
       setLoading(false)
     })
@@ -160,75 +172,120 @@ const Product = () => {
 
   const columns = [
     {
-      title: '渠道',
-      dataIndex: 'channel',
-      key: 'channel',
+      title: '日期',
+      dataIndex: 'date',
+      key: 'date',
+      width: 110,
+      fixed: 'left',
       sorter: {
-        compare: (a, b) => a.platform.localeCompare(b.platform)
+        compare: (a, b) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
         // multiple: 3
       }
     },
     {
-      title: '平台名称',
+      title: '平台(客户)名称',
       dataIndex: 'platform',
       key: 'platform',
+      width: 130,
+      render: (val, re) => val || re.customerName
+    },
+    {
+      title: '渠道',
+      dataIndex: 'channel',
+      width: 130,
+      key: 'channel'
+    },
+    {
+      title: '出库重量（斤）',
+      dataIndex: 'weight',
+      key: 'weight',
+      width: 110,
       sorter: {
-        compare: (a, b) => a.platform.localeCompare(b.platform)
+        compare: (a, b) => a.weight - b.weight
         // multiple: 3
-      }
-    },
-    {
-      title: '商品名称',
-      dataIndex: 'produceName',
-      key: 'produceName'
-    },
-    {
-      title: '关联包装',
-      dataIndex: 'package',
-      key: 'package'
+      },
+      sortDirections: ['descend', 'ascend']
     },
     // {
-    //   title: '供应价格',
-    //   dataIndex: 'price',
-    //   key: 'price',
-    //   width: 400,
-    //   render: (val) => (
-    //     <List
-    //       itemLayout="horizontal"
-    //       dataSource={val}
-    //       size={'small'}
-    //       renderItem={(item) => (
-    //         <List.Item
-    //           style={{
-    //             padding: '3px 0'
-    //           }}
-    //         >
-    //           <List.Item.Meta
-    //             avatar={
-    //               <Avatar src="https://img1.baidu.com/it/u=4280931182,3240552444&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" />
-    //             }
-    //             title={
-    //               <p style={{ fontSize: '9px', margin: '0' }}>
-    //                 价格： <span style={{ color: 'red' }}>{item.price}</span> 元
-    //               </p>
-    //             }
-    //             description={`时间：${(item.date || []).join(' - ')}`}
-    //           />
-    //         </List.Item>
-    //       )}
-    //     />
-    //   )
+    //   title: '单价',
+    //   dataIndex: 'unitPrice',
+    //   width: 100,
+    //   key: 'unitPrice'
     // },
     {
-      title: '审核人',
+      title: '金额',
+      dataIndex: 'price',
+      width: 100,
+      sorter: {
+        compare: (a, b) => a.price - b.price
+        // multiple: 3
+      },
+      key: 'price'
+    },
+    {
+      title: '出库审核人',
       dataIndex: 'auditor',
       key: 'auditor',
+      width: 100,
       ...getColumnSearchProps('auditor')
+    },
+    {
+      title: '是否付款',
+      dataIndex: 'pay',
+      key: 'pay',
+      width: 110,
+      render: (val) => (
+        <Tag
+          icon={
+            val === '现结' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+          }
+          color={val === '现结' ? '#55acee' : '#cd201f'}
+        >
+          {val}
+        </Tag>
+      )
+    },
+    {
+      title: '付款审核人',
+      dataIndex: 'payAuditor',
+      key: 'payAuditor',
+      width: 100
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+      ellipsis: true,
+      width: 150,
+      render: (val) => (
+        <Tooltip placement="topLeft" title={val}>
+          {val}
+        </Tooltip>
+      )
+    },
+    {
+      title: '证明材料',
+      dataIndex: 'material',
+      key: 'material',
+      ellipsis: true,
+      width: 100,
+      render: (val) =>
+        (val || []).map(
+          (item, index) =>
+            (
+              <a target="_blank" key={index} href={item} rel="noreferrer">
+                {item}
+              </a>
+            ) || '暂无'
+        )
     },
     {
       title: '操作',
       dataIndex: '',
+      fixed: 'right',
       key: 'x',
+      width: 100,
       render: (val, re) => <a onClick={() => showModal(re)}>编辑</a>
     }
   ]
@@ -253,28 +310,28 @@ const Product = () => {
   const addItem = (e) => {
     e.preventDefault()
     if (name) {
-      addPlatform(name)
-      const obj = {}
-      obj['name'] = name
-      setItems([...items, obj])
-      setName('')
-      fetchPlat()
+      fetchPlatform().then(() => {
+        const obj = {}
+        obj['name'] = name
+        setItems([...items, obj])
+        setName('')
+        fetchPlat()
+      })
     }
   }
 
-
   return (
-    <App tab={'product'}>
+    <App tab={'outStorage'}>
       <div>
         <div className={style.top}>
-          <div>
-            选择平台：
+          {/* <div>
+            供应商：
             <Select
               style={{
                 width: 300
               }}
               onChange={fetchData}
-              placeholder="请选择平台名称"
+              placeholder="请选择供应商名称"
               dropdownRender={(menu) => (
                 <>
                   {menu}
@@ -290,7 +347,7 @@ const Product = () => {
                     }}
                   >
                     <Input
-                      placeholder="请输入平台名称"
+                      placeholder="请输入供应商名称"
                       value={name}
                       onChange={onNameChange}
                     />
@@ -300,7 +357,7 @@ const Product = () => {
                         whiteSpace: 'nowrap'
                       }}
                     >
-                      <PlusOutlined /> 添加平台
+                      <PlusOutlined /> 添加供应商
                     </Typography.Link>
                   </Space>
                 </>
@@ -310,10 +367,10 @@ const Product = () => {
                 <Option key={item.name}>{item.name}</Option>
               ))}
             </Select>
-          </div>
+          </div> */}
           <div>
             <Button type="primary" onClick={() => showModal({})}>
-              +发布商品
+              新增
             </Button>
           </div>
         </div>
@@ -328,17 +385,17 @@ const Product = () => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`
           }}
-          scroll={{ y: 'calc(100vh - 320px)' }}
+          scroll={{ y: 'calc(100vh - 320px)', x: 1000 }}
         />
         {isModalVisible && (
-          <ProductModal
-            items={items.slice(0, -1)}
+          <OutStorageModal
+            items={items}
+            selectProject={selectProject}
             isModalVisible={true}
             data={itemData}
             handleCancel={handleCancel}
             handleFinish={handleFinish}
-            packageList={packageList}
-            selectProject={selectProject}
+            productList={productList}
           />
         )}
       </div>
@@ -346,4 +403,4 @@ const Product = () => {
   )
 }
 
-export default Product
+export default OutStorage

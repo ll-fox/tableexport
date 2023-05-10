@@ -24,3 +24,6 @@ a {
   font-size: 12px;
   line-height: 40px; /* 将行高加到line-height值 */
 }
+.ant-layout .ant-layout-sider-trigger{
+  background-color: #c49b45 !important;
+}

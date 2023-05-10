@@ -12,7 +12,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Welcome</h1>
+        <h1 className={styles.title}>金翁农业</h1>
         <Login />
       </main>
       <footer className={styles.footer}>

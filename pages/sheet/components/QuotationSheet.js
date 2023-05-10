@@ -63,7 +63,6 @@ export default function QuotationSheet() {
       (typeArr[index]?.carry || 0) +
       (typeArr[index]?.service || 0) +
       (typeArr[index]?.place || 0)
-    console.log(1111, e.target.textContent, cost)
   }
   const uploadButton = (
     <div>
@@ -79,7 +78,6 @@ export default function QuotationSheet() {
       </div>
     </div>
   )
-  console.log(333, typeArr)
   return (
       <div style={{ background: '#fff' }}>
         <div style={{ textAlign: 'right' }}>

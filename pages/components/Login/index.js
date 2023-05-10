@@ -74,12 +74,12 @@ export default function Login() {
       </Form.Item>
       <Form.Item>
         <Button
-          style={{ width: '100%' }}
+          style={{ width: '100%', backgroundColor: '#c49b45', border: 'none' }}
           type="primary"
           htmlType="submit"
           className="login-form-button"
         >
-          {isLogin ? 'Log in' : 'register'}
+          {isLogin ? '登陆' : '注册'}
         </Button>
         {/* Or */}
         <span

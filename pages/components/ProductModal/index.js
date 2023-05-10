@@ -12,15 +12,27 @@ import {
 import 'moment/locale/zh-cn'
 import { updateProduct, addProduct } from '../../api/product'
 import moment from 'moment'
-import { cloneDeep, isEmpty, isArray, isUndefined } from 'lodash'
+import { cloneDeep, isEmpty, isArray, isUndefined, find } from 'lodash'
 const { Option } = Select
 const { RangePicker } = DatePicker
 
+const channel = [{ name: '抖音' }, { name: '淘宝' }, { name: '拼多多' }]
+
 const ProductModal = (props) => {
+  const {
+    handleFinish,
+    handleCancel,
+    isModalVisible,
+    data,
+    items,
+    packageList,
+    selectProject
+  } = props
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [list, setList] = useState([])
-  const { handleFinish, handleCancel, isModalVisible, data, items } = props
+  const [platformList, setPlatformList] = useState(items || [])
+  const [showPlatform, setShowPlatform] = useState(data?.platform || false)
   const newData = cloneDeep(data)
   if (!isEmpty(data)) {
     newData.date = moment(data.date)
@@ -41,6 +53,10 @@ const ProductModal = (props) => {
   const onFinish = () => {
     form.validateFields().then((values) => {
       setLoading(true)
+      values.projectId = selectProject
+      values.specification = find(packageList, {
+        packageName: values.package
+      })?.specification
       if (isEmpty(data)) {
         addProduct(values).then((res) => {
           if (res) {
@@ -50,7 +66,7 @@ const ProductModal = (props) => {
             handleFinish()
           } else {
             setLoading(false)
-            message.error('保存失败！')
+            message.error('保存失败，因为该平台下已经存在该商品！')
           }
         })
       } else {
@@ -94,6 +110,11 @@ const ProductModal = (props) => {
         </Button>
       </div>
     )
+  }
+
+  const handleChange = (value) => {
+    setShowPlatform(true)
+    setPlatformList(value === '平台' ? items : channel)
   }
 
   const renderIntervalItem = (item, index) => {
@@ -160,46 +181,52 @@ const ProductModal = (props) => {
         }}
       >
         <Form.Item
-          name="platform"
-          label="平台名称"
+          name="channel"
+          label="渠道"
           rules={[
             {
               required: true,
-              message: '请选择平台名称!'
+              message: '请选择渠道!'
             }
           ]}
         >
-          <Select style={{ width: 250 }}>
-            {(items || []).map((item) => (
-              <Option key={item.name}>{item.name}</Option>
+          <Select style={{ width: 250 }} onChange={handleChange}>
+            {['平台', '电商'].map((item) => (
+              <Option key={item}>{item}</Option>
             ))}
           </Select>
         </Form.Item>
+        {showPlatform && (
+          <Form.Item
+            name="platform"
+            label="平台名称"
+            rules={[
+              {
+                required: true,
+                message: '请选择平台名称!'
+              }
+            ]}
+          >
+            <Select style={{ width: 250 }}>
+              {(platformList || []).map((item) => (
+                <Option key={item.name}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item
           name="produceName"
-          label="项目名称"
+          label="商品名称"
           rules={[
             {
               required: true,
-              message: '请输入项目名称!'
+              message: '请输入商品名称!'
             }
           ]}
         >
           <Input style={{ width: 250 }} />
         </Form.Item>
-        <Form.Item
-          name="spece"
-          label="商品规格名称"
-          rules={[
-            {
-              required: true,
-              message: '请输入商品规格名称!'
-            }
-          ]}
-        >
-          <Input style={{ width: 250 }} />
-        </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="price"
           label="价格"
           rules={[
@@ -229,6 +256,22 @@ const ProductModal = (props) => {
           ]}
         >
           {renderInterval()}
+        </Form.Item> */}
+        <Form.Item
+          name="package"
+          label="关联包装"
+          rules={[
+            {
+              required: true,
+              message: '请选择关联包装!'
+            }
+          ]}
+        >
+          <Select style={{ width: 250 }}>
+            {(packageList || []).map((item) => (
+              <Option key={item.packageName}>{item.packageName}</Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="auditor"
@@ -241,7 +284,7 @@ const ProductModal = (props) => {
           ]}
         >
           <Select style={{ width: 250 }}>
-            {['杨一凡', '米佳乐', '石喆'].map((name) => (
+            {['杨一凡', '贺海燕', '石喆'].map((name) => (
               <Option key={name}>{name}</Option>
             ))}
           </Select>

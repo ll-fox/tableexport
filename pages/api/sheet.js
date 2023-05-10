@@ -77,7 +77,6 @@ const addOutTemplateInfo = async (val) => {
   try {
     outTemplate.set(val)
     const res = await outTemplate.save()
-    console.log(1111, res.toJSON())
     return res.toJSON()
   } catch (e) {
     console.log(e)
