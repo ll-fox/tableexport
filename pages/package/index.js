@@ -17,7 +17,7 @@ import {
 import MyContext from '../../lib/context'
 import App from '../components/Layout/index'
 import style from './index.module.css'
-import PackageModal from '../components/PackageModal'
+import PackageModal from '../components/PackagesModal'
 import {
   fetchPackage,
 } from '../api/package'
