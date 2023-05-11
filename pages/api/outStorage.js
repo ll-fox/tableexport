@@ -1,15 +1,23 @@
 const AV = require('leancloud-storage')
 
 const addOutStorage = async (val) => {
-  const { projectId, price, weight } = val
+  const { projectId, price, weight, amount, packageId } = val
+  let Package=''
   const OutStorage = AV.Object.extend('OutStorage')
   const Project = AV.Object.createWithoutData('Project', projectId)
+  if (packageId){
+    Package = AV.Object.createWithoutData('Package', packageId)
+  } 
   const Out = new OutStorage()
   try {
     Out.set(val)
     Project.increment('sale', Number(price))
     Project.increment('weight', Number(-weight))
     await Project.save()
+    if (Package){
+      Package.increment('inventory', Number(-amount))
+      await Package.save()
+    } 
     const res = await Out.save()
     return res.toJSON()
   } catch (e) {
@@ -18,18 +26,28 @@ const addOutStorage = async (val) => {
 }
 
 const updateOutStorage = async (val, id) => {
-  const { projectId, price: newPrice, weight: newWeight } = val
-  console.log(33111, projectId)
+  const {
+    projectId,
+    price: newPrice,
+    weight: newWeight,
+    amount: newAmount,
+    packageId
+  } = val
   const Project = AV.Object.createWithoutData('Project', projectId)
   const OutStorage = AV.Object.createWithoutData('OutStorage', id)
   const query = new AV.Query('OutStorage')
   try {
-    query.get(id).then(Out=>{
-      const { price, weight } = Out.toJSON()
+    query.get(id).then((Out) => {
+      const { price, weight, amount } = Out.toJSON()
       Project.increment('sale', Number(newPrice - price))
       Project.increment('weight', Number(weight - newWeight))
+      Project.save()
+      if (packageId) {
+        const Package = AV.Object.createWithoutData('Package', packageId)
+        Package.increment('inventory', Number(amount - newAmount))
+        Package.save()
+      } 
     })
-    await Project.save()
     OutStorage.set(val)
     const res = await OutStorage.save()
     return res.toJSON()

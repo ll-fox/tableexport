@@ -234,22 +234,22 @@ const MaterialStorage = () => {
       key: 'payAuditor',
       width: 100
     },
-    // {
-    //   title: '是否付款',
-    //   dataIndex: 'pay',
-    //   key: 'pay',
-    //   width: 110,
-    //   render: (val) => (
-    //     <Tag
-    //       icon={
-    //         val === '现结' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
-    //       }
-    //       color={val === '现结' ? '#55acee' : '#cd201f'}
-    //     >
-    //       {val}
-    //     </Tag>
-    //   )
-    // },
+    {
+      title: '是否付款',
+      dataIndex: 'pay',
+      key: 'pay',
+      width: 110,
+      render: (val) => (
+        <Tag
+          icon={
+            val === '是' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+          }
+          color={val === '是' ? '#55acee' : '#cd201f'}
+        >
+          {val}
+        </Tag>
+      )
+    },
     {
       title: '备注',
       dataIndex: 'remark',

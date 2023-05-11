@@ -238,9 +238,9 @@ const OutStorage = () => {
       render: (val) => (
         <Tag
           icon={
-            val === '现结' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
+            val === '是' ? <CheckCircleOutlined /> : <CloseCircleOutlined />
           }
-          color={val === '现结' ? '#55acee' : '#cd201f'}
+          color={val === '是' ? '#55acee' : '#cd201f'}
         >
           {val}
         </Tag>

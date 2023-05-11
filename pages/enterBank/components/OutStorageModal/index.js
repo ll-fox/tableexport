@@ -32,7 +32,12 @@ const config = {
   ]
 }
 
-const channel = [{ name: '抖音' }, { name: '淘宝' }, { name: '拼多多' }]
+const channel = [
+  { name: '抖音' },
+  { name: '淘宝' },
+  { name: '拼多多' },
+  { name: '视频号' }
+]
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -84,11 +89,12 @@ const OutStorageModal = (props) => {
       values.projectId = selectProject
       values.date = values.date.format('YYYY-MM-DD')
       values.material = values.material?.map((item) => item.url)
-      const specification = find(productList, {
-        produceName: values.product
-      })?.specification
-      if (values.channel !== '线下' && specification) {
+      if (values.channel !== '线下') {
+        const { specification, packageId } = find(productList, {
+          produceName: values.product
+        })
         values.weight = Number(values.amount) * Number(specification)
+        values.packageId = packageId
       }
       if (isEmpty(data)) {
         addOutStorage(values).then((res) => {
@@ -238,26 +244,24 @@ const OutStorageModal = (props) => {
               </Select>
             </Form.Item>
           )}
-          {
-            showPlatform &&
-              showProduct &&(
-              <Form.Item
-                name="product"
-                label="商品名称"
-                rules={[
-                  {
-                    required: true,
-                    message: '请选择商品名称!'
-                  }
-                ]}
-              >
-                <Select style={{ width: 250 }}>
-                  {(products || []).map((item) => (
-                    <Option key={item.produceName}>{item.produceName}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+          {showPlatform && showProduct && (
+            <Form.Item
+              name="product"
+              label="商品名称"
+              rules={[
+                {
+                  required: true,
+                  message: '请选择商品名称!'
+                }
+              ]}
+            >
+              <Select style={{ width: 250 }}>
+                {(products || []).map((item) => (
+                  <Option key={item.produceName}>{item.produceName}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
           {showPlatform && (
             <Form.Item
               name="amount"
@@ -304,7 +308,7 @@ const OutStorageModal = (props) => {
           )}
           <Form.Item
             name="auditor"
-            label="进库审核人"
+            label="出库审核人"
             rules={[
               {
                 required: true,
@@ -320,12 +324,12 @@ const OutStorageModal = (props) => {
           </Form.Item>
           <Form.Item
             name="price"
-            label="应付款金额"
+            label="应收款金额"
             rules={[
               {
                 type: 'price',
                 required: true,
-                message: '请输入应付款金额!'
+                message: '请输入应收款金额!'
               }
             ]}
           >
@@ -333,35 +337,35 @@ const OutStorageModal = (props) => {
           </Form.Item>
           <Form.Item
             name="payAuditor"
-            label="付款审核人"
+            label="收款审核人"
             rules={[
               {
                 required: true,
-                message: '请选择付款审核人!'
+                message: '请选择收款审核人!'
               }
             ]}
           >
             <Select style={{ width: 250 }}>
-              {['杨一凡', '王宝亮', '石喆'].map((name) => (
+              {['杨一凡', '贺海燕', '石喆'].map((name) => (
                 <Option key={name}>{name}</Option>
               ))}
             </Select>
           </Form.Item>
-          {/* <Form.Item
+          <Form.Item
             name="pay"
             label="是否付款"
             rules={[
               {
                 required: true,
-                message: '请输选择!'
+                message: '请输选择是否付款!'
               }
             ]}
           >
-            <Select>
-              <Option value="现结">现结</Option>
-              <Option value="月结">月结</Option>
-            </Select>
-          </Form.Item> */}
+            <Radio.Group>
+              <Radio value="是"> 是 </Radio>
+              <Radio value="否"> 否 </Radio>
+            </Radio.Group>
+          </Form.Item>
           <Form.Item name="remark" label="备注">
             <TextArea />
           </Form.Item>

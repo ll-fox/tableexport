@@ -16,7 +16,12 @@ import { cloneDeep, isEmpty, isArray, isUndefined, find } from 'lodash'
 const { Option } = Select
 const { RangePicker } = DatePicker
 
-const channel = [{ name: '抖音' }, { name: '淘宝' }, { name: '拼多多' }]
+const channel = [
+  { name: '抖音' },
+  { name: '淘宝' },
+  { name: '拼多多' },
+  { name: '视频号' }
+]
 
 const ProductModal = (props) => {
   const {
@@ -54,9 +59,11 @@ const ProductModal = (props) => {
     form.validateFields().then((values) => {
       setLoading(true)
       values.projectId = selectProject
-      values.specification = find(packageList, {
+      const {specification, objectId} = find(packageList, {
         packageName: values.package
-      })?.specification
+      })
+      values.specification = specification
+      values.packageId = objectId
       if (isEmpty(data)) {
         addProduct(values).then((res) => {
           if (res) {

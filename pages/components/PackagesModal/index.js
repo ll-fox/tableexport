@@ -8,7 +8,8 @@ import {
   message,
   Button,
   Select,
-  Upload
+  Upload,
+  Radio
 } from 'antd'
 import { UploadOutlined, PlusOutlined } from '@ant-design/icons'
 import 'moment/locale/zh-cn'
@@ -266,14 +267,14 @@ const PackageModal = (props) => {
           rules={[
             {
               required: true,
-              message: '请选择是否付款!'
+              message: '请输选择是否付款!'
             }
           ]}
         >
-          <Select style={{ width: 250 }}>
-            <Option value="是">是</Option>
-            <Option value="否">否</Option>
-          </Select>
+          <Radio.Group>
+            <Radio value="是"> 是 </Radio>
+            <Radio value="否"> 否 </Radio>
+          </Radio.Group>
         </Form.Item>
         <Form.Item name="remark" label="备注">
           <TextArea
@@ -290,7 +291,7 @@ const PackageModal = (props) => {
           rules={[
             {
               type: 'array',
-            //   required: true,
+              //   required: true,
               message: '请上传证明材料!'
             }
           ]}

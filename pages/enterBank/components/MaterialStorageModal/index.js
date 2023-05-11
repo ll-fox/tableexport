@@ -8,7 +8,8 @@ import {
   message,
   Select,
   Upload,
-  Button
+  Button,
+  Radio
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 const AV = require('leancloud-storage')
@@ -74,8 +75,8 @@ const MaterialStorageModal = (props) => {
       setLoading(true)
       values.date = values.date.format('YYYY-MM-DD')
       values.material = values.material.map((item) => item.url)
+      values.projectId = selectProject
       if (isEmpty(data)) {
-        values.projectId = selectProject
         addMaterialStorage(values).then((res) => {
           if (res) {
             setLoading(false)
@@ -257,21 +258,21 @@ const MaterialStorageModal = (props) => {
               ))}
             </Select>
           </Form.Item>
-          {/* <Form.Item
+          <Form.Item
             name="pay"
             label="是否付款"
             rules={[
               {
                 required: true,
-                message: '请输选择!'
+                message: '请输选择是否付款!'
               }
             ]}
           >
-            <Select>
-              <Option value="现结">现结</Option>
-              <Option value="月结">月结</Option>
-            </Select>
-          </Form.Item> */}
+            <Radio.Group>
+              <Radio value="是"> 是 </Radio>
+              <Radio value="否"> 否 </Radio>
+            </Radio.Group>
+          </Form.Item>
           <Form.Item name="remark" label="备注">
             <TextArea />
           </Form.Item>
