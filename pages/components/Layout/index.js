@@ -91,25 +91,25 @@ const App = (props = {}) => {
           ),
           key: 'product'
         },
-        {
-          label: (
-            <Link href="/expressage">
-              <a>快递管理</a>
-            </Link>
-          ),
-          key: 'expressage'
-        }
+        // {
+        //   label: (
+        //     <Link href="/expressage">
+        //       <a>快递管理</a>
+        //     </Link>
+        //   ),
+        //   key: 'expressage'
+        // }
       ]
     },
-    {
-      label: (
-        <Link href="/aftersales">
-          <a>售后反馈</a>
-        </Link>
-      ),
-      icon: React.createElement(InsuranceOutlined),
-      key: 'aftersales'
-    },
+    // {
+    //   label: (
+    //     <Link href="/aftersales">
+    //       <a>售后反馈</a>
+    //     </Link>
+    //   ),
+    //   icon: React.createElement(InsuranceOutlined),
+    //   key: 'aftersales'
+    // },
     // {
     //   label: (
     //     <Link href="/orderForm">
@@ -119,15 +119,15 @@ const App = (props = {}) => {
     //   icon: React.createElement(UserOutlined),
     //   key: 'orderForm'
     // },
-    {
-      label: (
-        <Link href="/capital">
-          <a>财务支出</a>
-        </Link>
-      ),
-      icon: React.createElement(MoneyCollectOutlined),
-      key: 'capital'
-    },
+    // {
+    //   label: (
+    //     <Link href="/capital">
+    //       <a>财务支出</a>
+    //     </Link>
+    //   ),
+    //   icon: React.createElement(MoneyCollectOutlined),
+    //   key: 'capital'
+    // },
     {
       label: (
         <Link href="/sheet">
