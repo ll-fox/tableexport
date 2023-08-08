@@ -61,7 +61,7 @@ export default function OutboundSheet() {
   const [typeArr, setTypeArr] = useState([])
   const [cost, setCost] = useState(0)
   const [weight, setWeight] = useState(0)
-  const [warehouse,setWarehouse] = useState([])
+  const [warehouse, setWarehouse] = useState([])
   const [product, setProduct] = useState([])
   const [name, setName] = useState('')
   const [productName, setProductName] = useState('')
@@ -99,7 +99,7 @@ export default function OutboundSheet() {
   const addItem = (e) => {
     e.preventDefault()
     if (name) {
-      addWarehouse(name).then(()=>{
+      addWarehouse(name).then(() => {
         setName('')
         fetchData()
       })
@@ -110,12 +110,12 @@ export default function OutboundSheet() {
     e.preventDefault()
     if (productName) {
       addProductName(productName).then(
-        ()=>{
+        () => {
           setProductName('')
           fetchProductData()
         }
       )
-      
+
     }
   }
 
@@ -139,11 +139,11 @@ export default function OutboundSheet() {
     )
   }
 
-  const handleChange = (val,type) => {
+  const handleChange = (val, type) => {
     const newData = data;
     newData[type] = val;
     setData(() => newData)
-    if(type === 'account'){
+    if (type === 'account') {
       setAccountInfo(account[val])
     }
   }
@@ -174,7 +174,7 @@ export default function OutboundSheet() {
     setCost(result)
   }
 
-  const saveTable = ()=>{
+  const saveTable = () => {
     let val = {}
     val.date = moment().format('YYYY-MM-DD')
     val.customer = customer
@@ -197,24 +197,24 @@ export default function OutboundSheet() {
     }
     setLoading(true)
 
-    addOutTemplateInfo(val).then(()=>{
+    addOutTemplateInfo(val).then(() => {
       setLoading(false)
     })
   }
-  const ToString = (n) =>{
-    if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(n)){
-        return "数据非法";  //判断数据是否大于0
+  const ToString = (n) => {
+    if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(n)) {
+      return "数据非法";  //判断数据是否大于0
     }
     var unit = '仟佰拾亿仟佰拾万仟佰拾元角分',
       str = ''
-    n += "00";  
+    n += "00";
     var indexpoint = n.indexOf('.');  // 如果是小数，截取小数点前面的位数
-    if (indexpoint >= 0){
-        n = n.substring(0, indexpoint) + n.substr(indexpoint+1, 2);   // 若为小数，截取需要使用的unit单位
+    if (indexpoint >= 0) {
+      n = n.substring(0, indexpoint) + n.substr(indexpoint + 1, 2);   // 若为小数，截取需要使用的unit单位
     }
     unit = unit.substr(unit.length - n.length);  // 若为整数，截取需要使用的unit单位
-    for (var i=0; i < n.length; i++){
-        str += "零壹贰叁肆伍陆柒捌玖".charAt(n.charAt(i)) + unit.charAt(i);  //遍历转化为大写的数字
+    for (var i = 0; i < n.length; i++) {
+      str += "零壹贰叁肆伍陆柒捌玖".charAt(n.charAt(i)) + unit.charAt(i);  //遍历转化为大写的数字
     }
     return str
       .replace(/零(仟|佰|拾|角)/g, '零')
@@ -613,6 +613,10 @@ export default function OutboundSheet() {
                         {
                           value: '个',
                           label: '个'
+                        },
+                        {
+                          value: '件',
+                          label: '件'
                         }
                       ]}
                     />
