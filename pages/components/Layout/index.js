@@ -12,6 +12,7 @@ import {
   InsuranceOutlined,
   MoneyCollectOutlined,
   FileProtectOutlined,
+  CommentOutlined,
   BarChartOutlined
 } from '@ant-design/icons'
 import MyContext from '../../../lib/context'
@@ -90,7 +91,7 @@ const App = (props = {}) => {
             </Link>
           ),
           key: 'product'
-        },
+        }
         // {
         //   label: (
         //     <Link href="/expressage">
@@ -99,6 +100,29 @@ const App = (props = {}) => {
         //   ),
         //   key: 'expressage'
         // }
+      ]
+    },
+    {
+      label: '客户提交',
+      key: 'customer',
+      icon: React.createElement(CommentOutlined),
+      children: [
+        {
+          label: (
+            <Link href="/customer/supplyCustomer">
+              <a>供应链客户</a>
+            </Link>
+          ),
+          key: 'supplyCustomer'
+        },
+        {
+          label: (
+            <Link href="/customer/normalCustomer">
+              <a>普通客户</a>
+            </Link>
+          ),
+          key: 'normalCustomer'
+        }
       ]
     },
     // {
