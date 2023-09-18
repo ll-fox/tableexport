@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useRef, useState, useEffect, useContext } from 'react'
-import { Table, Input, Button, Space, Tooltip, Tag, Select } from 'antd'
+import { Table, Input, Button, Space, Tooltip, Image, Select } from 'antd'
 import moment from 'moment'
 import Highlighter from 'react-highlight-words'
 import {
@@ -160,7 +161,7 @@ const SupplyCustomer = () => {
       title: '产品周期',
       dataIndex: 'period',
       key: 'period',
-			render: (val)=>(val ||[]).join('至')
+      render: (val) => (val || []).join('至')
     },
     {
       title: '仓库详细地址',
@@ -194,12 +195,21 @@ const SupplyCustomer = () => {
       dataIndex: 'material',
       key: 'material',
       ellipsis: true,
-      render: (val) =>
-        val.map((item, index) => (
-          <a target="_blank" key={index} href={item} rel="noreferrer">
-            {item}
-          </a>
-        ))
+      render: (val) => (
+        <Image.PreviewGroup>
+          {(val || []).map((item, index)=>{
+						if(item){
+							return (
+                <Image
+                  key={index}
+                  width={50}
+                  src={item}
+                />
+              )
+						}
+					})}
+        </Image.PreviewGroup>
+      )
     }
   ]
 
